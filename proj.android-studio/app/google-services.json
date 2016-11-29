@@ -1,0 +1,112 @@
+{
+  "project_info": {
+    "project_number": "967998240117",
+    "firebase_url": "https://admob-app-id-9185940764.firebaseio.com",
+    "project_id": "admob-app-id-9185940764",
+    "storage_bucket": "admob-app-id-9185940764.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:967998240117:android:25e38780f17d1cff",
+        "android_client_info": {
+          "package_name": "com.skyeye.solitaire"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "967998240117-l1tjbn5old776uf4oqjdfc2p8u6ni3h8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skyeye.solitaire",
+            "certificate_hash": "BEF882DE00ABD40409F9E44D9B855E77A24B9679"
+          }
+        },
+        {
+          "client_id": "967998240117-ue6j3cf8nhun8euep6v1qan8t4tsmh8e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3ZgPvbiVBuJjiDhQs9unY5TXJm2ac0tk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:967998240117:android:f85211aa87881a37",
+        "android_client_info": {
+          "package_name": "com.skyeye.solitaire.huawei"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "967998240117-ue6j3cf8nhun8euep6v1qan8t4tsmh8e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3ZgPvbiVBuJjiDhQs9unY5TXJm2ac0tk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:967998240117:android:126a786ac6c41b19",
+        "android_client_info": {
+          "package_name": "com.skyeye.solitaire1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "967998240117-ue6j3cf8nhun8euep6v1qan8t4tsmh8e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3ZgPvbiVBuJjiDhQs9unY5TXJm2ac0tk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,87 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "com.skyeye.solitaire1"
+        minSdkVersion 11
+        targetSdkVersion 23
+        versionCode 11
+        versionName "1.3.4"
+        rootProject.ext.variantRelease = false
+    }
+
+    sourceSets.main {
+        java.srcDir "src"
+        res.srcDir "res"
+        jniLibs.srcDir "libs"
+        manifest.srcFile "AndroidManifest.xml"
+        assets.srcDir "assets"
+    }
+
+    signingConfigs {
+
+        release {
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                storeFile file(RELEASE_STORE_FILE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':libcocos2dx')
+    compile(name: 'AudienceNetwork', ext: 'aar')
+    compile(name: 'DebugSettings', ext: 'aar')
+    compile(name: 'unity-ads', ext: 'aar')
+
+//    compile 'com.android.support:appcompat-v7:23.0.3'
+    //    compile 'com.yalantis:ucrop:2.2.0'
+//    compile 'com.theartofdev.edmodo:android-image-cropper:2.3.+'
+    //    compile 'com.edmodo:cropper:1.0.1'
+    //    compile 'com.theartofdev.edmodo:android-image-cropper:2.3.+'
+    compile 'com.google.firebase:firebase-core:9.4.0'
+    compile 'com.google.firebase:firebase-ads:9.4.0'
+    compile 'com.appsflyer:af-android-sdk:4.6.0@aar'
+    compile 'com.google.android.gms:play-services-appindexing:9.4.0'
+    compile 'com.google.android.gms:play-services-gcm:9.4.0'
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.soundcloud.android:android-crop:1.0.1@aar'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+}
+
+task cleanAssets(type: Delete) {
+    delete 'assets'
+}
+task copyAssets(type: Copy) {
+    from '../../Resources'
+    into 'assets'
+}
+
+clean.dependsOn cleanAssets
+preBuild.dependsOn copyAssets
+
+apply plugin: 'com.google.gms.google-services'
