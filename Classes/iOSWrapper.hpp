@@ -11,13 +11,18 @@
 
 #include <stdio.h>
 #include "cocos2d.h"
+
 using namespace cocos2d;
+using namespace std;
 
 static const char* kBatteryChanged = "BatteryChanged";
 
 class iOSWrapper {
     
 public:
+    
+    static void showToSetupThemeAppPage(bool directly = false);
+    
     //0-1.0
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
     static char* jstringTostring(JNIEnv* env, jstring jstr);

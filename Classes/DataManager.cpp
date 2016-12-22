@@ -39,6 +39,46 @@ namespace NSDataManage {
         __NotificationCenter::getInstance()->postNotification(NSGlobal:: NTFFactor::NTF_SETTING_REFRESH);
     }
     
+    void DataManager::changeCardback(string name, bool refresh, bool isCustom){
+        CCLOG("changeCardback name=%s", name.c_str());
+        HLAnalsytWrapper::event("SetCardbacks");
+        auto mgr = DataManager::getInstance();
+        if(isCustom) mgr->setCustomSelectCardbackName(name);
+        auto item = mgr->getCardback(name);
+        
+        if(name == "cardback_1"){
+            
+        } else if (item->getIsNew()){
+            UserDefault::getInstance()->setBoolForKey(StringUtils::format("KL_CARDBACK_%s_CLICK", item->getName().c_str()).c_str(), true);
+            UserDefault::getInstance()->flush();
+        }
+        if(refresh) __NotificationCenter::getInstance()->postNotification(NSGlobal:: NTFFactor::NTF_SETTING_REFRESH);
+    }
+    
+    void DataManager::changeFace(string name, bool refresh,bool isCustom){
+    
+        auto dataArray = this->getFaces();
+        HLAnalsytWrapper::event("SetFaces");
+        if(isCustom) setCustomSelectFaceName(name);
+        if(refresh) __NotificationCenter::getInstance()->postNotification(NSGlobal:: NTFFactor::NTF_SETTING_REFRESH);
+    }
+   
+    void DataManager::changeTheme(string name, bool refresh,bool isCustom ){
+        HLAnalsytWrapper::event("SetThemes");
+        auto mgr = DataManager::getInstance();
+        if(isCustom){
+            mgr->setCustomSelectThemeName(name);
+        }
+        auto item = mgr->getTheme(name);
+        if (item->getName() == "theme_1") {
+            
+        } else if (item->getIsNew()) {
+            UserDefault::getInstance()->setBoolForKey(StringUtils::format("KL_THEME_%s_CLICK", item->getName().c_str()).c_str(), true);
+            UserDefault::getInstance()->flush();
+        }
+        if(refresh)__NotificationCenter::getInstance()->postNotification(NSGlobal:: NTFFactor::NTF_SETTING_REFRESH);
+    }
+    
     bool DataManager::getFirstShared(){
         return UserDefault::getInstance()->getBoolForKey("KL_FirstShared", false);
     }
@@ -67,23 +107,21 @@ namespace NSDataManage {
     }
     
     string DataManager::getPreviewThemeFile(){
-    
-        if (DataManager::getInstance()->getThemeID() == 1) {
+        if (getSelectThemeName() == "theme_1") {
             return getCachePreviewThemeFile();
         } else {
-            auto theme = _themes.at(DataManager::getInstance()->getThemeID()-1);
+            auto theme = getTheme(getSelectThemeName());
             return theme->getPreviewFile();
         }
     }
     
     string DataManager::getThemeFile(){
-        if (DataManager::getInstance()->getThemeID() == 1) {
+        string name = getSelectThemeName();
+        if (name == "theme_1") {
             auto winSize = Director::getInstance()->getWinSize();
             return getCacheThemeFile(winSize.height > winSize.width);
         } else {
-            auto theme = _themes.at(DataManager::getInstance()->getThemeID()-1);
-//            char str[64];
-//            sprintf(str, "shared/theme/%d.jpg", DataManager::getInstance()->getThemeID()-1);
+            auto theme = getTheme(name);
             return theme->getBgFile();
         }
     }
@@ -110,14 +148,7 @@ namespace NSDataManage {
     }
     
     string DataManager::getCardbackFile(){
-        
-        if(DataManager::getInstance()->getCardbackID() == 1){
-            return getCacheCardbackFile();
-        } else {
-            char str[128];
-            sprintf(str, "shared/cardback/%d.png", DataManager::getInstance()->getCardbackID()-1);
-            return str;
-        }
+        return getCardback(getSelectCardbackName())->getFile();
     }
     
     int DataManager::getCardbackID(){
@@ -138,35 +169,9 @@ namespace NSDataManage {
         UserDefault::getInstance()->flush();
     }
     
-    int DataManager::getVegasScore(){
-        return UserDefault::getInstance()->getIntegerForKey("KL_VegasScore", 0);
-    }
-    
     void DataManager::addVegasScore(int add){
         setVegasScore(getVegasScore() + add);
     }
-    
-    void DataManager::setVegasScore(int value){
-        UserDefault::getInstance()->setIntegerForKey("KL_VegasScore", value);
-        UserDefault::getInstance()->flush();
-    }
-    
-    void DataManager::setVegasOn(bool value){
-        UserDefault::getInstance()->setBoolForKey("kl_isVegasOn", value);
-        UserDefault::getInstance()->flush();
-    }
-    void DataManager::setVegasScoreAdd(bool value){
-        UserDefault::getInstance()->setBoolForKey("kl_isVegasScoreAdd", value);
-        UserDefault::getInstance()->flush();
-    }
-    
-    bool DataManager::isVegasOn(){
-    return UserDefault::getInstance()->getBoolForKey("kl_isVegasOn", false);
-    }
-    bool DataManager::isVegasScoreAdd(){
-    return UserDefault::getInstance()->getBoolForKey("kl_isVegasScoreAdd", false);
-    }
-    
     
     bool DataManager::isSoundOn(){
         return UserDefault::getInstance()->getBoolForKey("kl_sound", true);
@@ -180,18 +185,19 @@ namespace NSDataManage {
     DataManager::DataManager():
     _lastData(nullptr),
     _chanlleged(false),
-    _requstData(nullptr)
+    _requstData(nullptr),
+    _needUpdateSetupFile(false)
     {
         m_pXml = NULL;
-        m_strXml = CCFileUtils::getInstance()->getWritablePath() + constChrFileName;
+        m_strXml = FileUtils::getInstance()->getWritablePath() + constChrFileName;
         
         
         // 初始化设置数据
-        m_settings.m_chou3card  = (ENUM_CHOU3CARD)0;
-        m_settings.m_right_hand = (ENUM_RIGHT_HAND)1;
-        m_settings.m_time_score = (ENUM_TIME_SCORE)1;
-        m_settings.m_action     = (ENUM_ACTION)0;
-        m_settings.m_big_card   = (ENUM_BIG_CARD)1;
+//        m_settings.m_chou3card  = (ENUM_CHOU3CARD)0;
+//        m_settings.m_right_hand = (ENUM_RIGHT_HAND)1;
+//        m_settings.m_time_score = (ENUM_TIME_SCORE)1;
+//        m_settings.m_action     = (ENUM_ACTION)0;
+//        m_settings.m_big_card   = (ENUM_BIG_CARD)1;
         
         // 初始化统计数据
         for(int i=0;i<2;i++){
@@ -229,7 +235,7 @@ namespace NSDataManage {
             if (!m_pXml) {
                 return false;
             }
-            if (!CCFileUtils::getInstance()->isFileExist(m_strXml))
+            if (!FileUtils::getInstance()->isFileExist(m_strXml))
             {
                 // 没有xml文件，生成一个
                 CC_BREAK_IF(!InitLocalXml());
@@ -237,42 +243,248 @@ namespace NSDataManage {
             
             bResult = ReadLoaclData();
             
+            // 从数据文件解析数据
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+            string dataSourceFile = "dataSource.plist";
+#else 
+            string dataSourceFile = "iOS/dataSource.plist";
+#endif
+            
+            ValueMap root = FileUtils::getInstance()->getValueMapFromFile(dataSourceFile);
+            // 从缓存文件解析安装数据
+            auto setupFile =  getThemeSetupFile();
+            ValueMap setupRoot = FileUtils::getInstance()->getValueMapFromFile(setupFile);
+            
+            ValueVector faceArray = root["_faces"].asValueVector();
+            //牌面数据
+            //本地
+            for (int i = 0; i < faceArray.size(); i++) {
+                ValueMap map = faceArray[i].asValueMap();
+                FaceItem *item = new FaceItem();
+                item->setName(map["_name"].asString());
+                item->setPreviewFile(map["_previewFile"].asString());
+                item->setFilePrefix(map["_filePrefix"].asString());
+                item->setIsNew(map["_isNew"].asBool());
+                _faces.pushBack(item);
+                item->release();
+            }
+            
+            //安装
+            ValueVector faceVector;
+            if (setupRoot.find("_faces") != setupRoot.end()) {
+                faceVector = setupRoot["_faces"].asValueVector();
+            }
+            for (int i = 0; i < faceVector.size(); i++) {
+                ValueMap map = faceVector[i].asValueMap();
+                FaceItem *item = new FaceItem();
+                item->setName(map["_name"].asString());
+                item->setPreviewFile(map["_previewFile"].asString());
+                item->setFilePrefix(map["_filePrefix"].asString());
+                item->setIsNew(map["_isNew"].asBool());
+                _faces.pushBack(item);
+                _setupFaces.pushBack(item);
+                item->release();
+                
+            }
+            
+            ValueVector cardbackArray = root["_cardbacks"].asValueVector();
+            //牌被数据
+            //本地
+            for (int i = 0; i < cardbackArray.size(); i++) {
+                ValueMap map = cardbackArray[i].asValueMap();
+                CardbackItem *item = new CardbackItem();
+                item->setName(map["_name"].asString());
+                item->setFile(map["_file"].asString());
+                item->setPreviewFile(map["_previewFile"].asString());
+                item->setIsNew(map["_isNew"].asBool());
+                _cardbacks.pushBack(item);
+                item->release();
+            }
+            
+            if (getCustomSelectCardbackName() == "cardback_1") {
+                auto item = _cardbacks.at(0);
+                item->setPreviewFile(getCacheCardbackFile());
+                item->setFile(getCacheCardbackFile());
+            }
+            if(getFirstShared()) {
+                auto item = _cardbacks.at(2);
+                item->setPreviewFile("shared/cardback/2.png");
+                item->setFile("shared/cardback/2.png");
+                item->setIsNew(true);
+            }
+            //安装
+            ValueVector cardbackVector;
+            if (setupRoot.find("_cardbacks") != setupRoot.end()) {
+                cardbackVector = setupRoot["_cardbacks"].asValueVector();
+            }
+            for (int i = 0; i < cardbackVector.size(); i++) {
+                ValueMap map = cardbackVector[i].asValueMap();
+                CardbackItem *item = new CardbackItem();
+                item->setName(map["_name"].asString());
+                item->setFile(map["_file"].asString());
+                item->setPreviewFile(map["_previewFile"].asString());
+                item->setIsNew(map["_isNew"].asBool());
+                _cardbacks.pushBack(item);
+                _setupCardbacks.pushBack(item);
+                item->release();
+            }
+            
             //主题数据
             //本地
-            for (int i = 0; i < kThemeCount+1; i++) {
+            ValueVector themeArray = root["_themes"].asValueVector();
+            for (int i = 0; i < themeArray.size(); i++) {
+                ValueMap map = themeArray[i].asValueMap();
                 ThemeItem *item = new ThemeItem();
-                if (i == 0 && getThemeID() == 0) {
-                    item->setName("cache");
+                if (i == 0 && getCustomSelectThemeName() == "theme_1") {
+                    item->setName("theme_1");
                     item->setBgFile(getCacheThemeFile(true));
                     item->setPreviewFile(getCachePreviewThemeFile());
                 } else {
-                    item->setName(StringUtils::format("theme_%d", i));
-                    item->setBgFile(StringUtils::format("shared/theme/%d.jpg", i));
-                    item->setPreviewFile(StringUtils::format("shared/theme/%d.png", i));
+                    item->setName(map["_name"].asString());
+                    item->setBgFile(map["_bgFile"].asString());
+                    item->setPreviewFile(map["_previewFile"].asString());
+                    item->setIsNew(map["_isNew"].asBool());
                 }
                 _themes.pushBack(item);
                 item->release();
             }
             //安装
-            auto setupFile =  FileUtils::getInstance()->getWritablePath() + "AppSetup.plist";
-            ValueVector themeVector = FileUtils::getInstance()->getValueVectorFromFile(setupFile);
+            ValueVector themeVector;
+            if (setupRoot.find("_themes") != setupRoot.end()) {
+                themeVector = setupRoot["_themes"].asValueVector();
+            }
+
             for (auto e : themeVector) {
                 auto map = e.asValueMap();
                 ThemeItem *item = new ThemeItem();
-                item->setName(map["name"].asString());
-                item->setBgFile(map["bgFile"].asString());
-                item->setPreviewFile(map["previewFile"].asString());
-                
+                item->setName(map["_name"].asString());
+                item->setBgFile(map["_bgFile"].asString());
+                item->setPreviewFile(map["_previewFile"].asString());
+                item->setIsNew(map["_isNew"].asBool());
                 
                 _themes.pushBack(item);
                 _setupThemes.pushBack(item);
                 item->release();
             }
             
+            if (getCustomSelectThemeName() == "theme_1") {
+                auto item = _themes.at(0);
+                item->setPreviewFile(getCachePreviewThemeFile());
+                item->setBgFile(getCacheThemeFile(true));
+            }
+            
+            //主题集合
+            //本地
+            ValueVector themeSetArray = root["_themeSets"].asValueVector();
+            for (int i = 0; i < themeSetArray.size(); i++) {
+                ValueMap map = themeSetArray[i].asValueMap();
+                ThemeSetItem *item = new ThemeSetItem();
+                item->setName(map["_name"].asString());
+                item->setPreviewFile(map["_previewFile"].asString());
+                item->setFaceName(map["_faceName"].asString());
+                item->setCardbackName(map["_cardbackName"].asString());
+                item->setThemeName(map["_themeName"].asString());
+                item->setIsNew(map["_isNew"].asBool());
+
+                _themeSets.pushBack(item);
+                item->release();
+            }
+            //安装
+            ValueVector themeSetVector;
+            if (setupRoot.find("_themeSets") != setupRoot.end()) {
+                themeSetVector = setupRoot["_themeSets"].asValueVector();
+            }
+            for (int i = 0; i < themeSetVector.size(); i++) {
+                ValueMap map = themeSetVector[i].asValueMap();
+                ThemeSetItem *item = new ThemeSetItem();
+                item->setName(map["_name"].asString());
+                item->setPreviewFile(map["_previewFile"].asString());
+                item->setFaceName(map["_faceName"].asString());
+                item->setCardbackName(map["_cardbackName"].asString());
+                item->setThemeName(map["_themeName"].asString());
+                item->setIsNew(map["_isNew"].asBool());
+
+                _themeSets.pushBack(item);
+                _setupThemeSets.pushBack(item);
+                item->release();
+            }
+            
+            Director::getInstance()->getScheduler()->scheduleUpdate(this, 0, false);
             
         }while(0);
         return bResult;
     }
+    
+    void DataManager::update(float dt){
+        if (_needUpdateSetupFile){
+            
+            auto setupFile =  getThemeSetupFile();
+            ValueMap root;
+
+            //牌面
+            {
+                ValueVector v;
+                for(auto e : _setupFaces){
+                    ValueMap map;
+                    map["_name"] = cocos2d::Value(e->getName());
+                    map["_filePrefix"] = cocos2d::Value(e->getFilePrefix());
+                    map["_previewFile"] = cocos2d::Value(e->getPreviewFile());
+                    map["_isNew"] = cocos2d::Value(e->getIsNew());
+                    v.push_back(cocos2d::Value(map));
+                }
+                root["_faces"] = Value(v);
+            }
+            //牌被
+            {
+                ValueVector v;
+                for(auto e : _setupCardbacks){
+                    ValueMap map;
+                    map["_name"] = cocos2d::Value(e->getName());
+                    map["_file"] = cocos2d::Value(e->getFile());
+                    map["_previewFile"] = cocos2d::Value(e->getPreviewFile());
+                    map["_isNew"] = cocos2d::Value(e->getIsNew());
+                    v.push_back(cocos2d::Value(map));
+                }
+                root["_cardbacks"] = Value(v);
+            }
+            
+            
+            //背景
+            {
+                ValueVector v;
+                for(auto e : _setupThemes){
+                    ValueMap map;
+                    map["_name"] = cocos2d::Value(e->getName());
+                    map["_bgFile"] = cocos2d::Value(e->getBgFile());
+                    map["_previewFile"] = cocos2d::Value(e->getPreviewFile());
+                    map["_isNew"] = cocos2d::Value(e->getIsNew());
+                    v.push_back(cocos2d::Value(map));
+                }
+                root["_themes"] = Value(v);
+            }
+            
+            //集合
+            {
+                ValueVector v;
+                for(auto e : _setupThemeSets){
+                    ValueMap map;
+                    map["_name"] = cocos2d::Value(e->getName());
+                    map["_previewFile"] = cocos2d::Value(e->getPreviewFile());
+                    map["_isNew"] = cocos2d::Value(e->getIsNew());
+                    map["_faceName"] = cocos2d::Value(e->getFaceName());
+                    map["_cardbackName"] = cocos2d::Value(e->getCardbackName());
+                    map["_themeName"] = cocos2d::Value(e->getThemeName());
+                    v.push_back(cocos2d::Value(map));
+                }
+                root["_themeSets"] = Value(v);
+            }
+            
+            FileUtils::getInstance()->writeValueMapToFile(root, setupFile);
+            
+            _needUpdateSetupFile = false;
+        }
+    }
+    
     bool DataManager::InitLocalXml(){
         // 生成xml文件
         bool bResult = false;
@@ -348,11 +560,11 @@ namespace NSDataManage {
             //////////////////解析settings节点,并且对内存数据赋值//////////////////////////
             XMLElement *settingsEle = rootEle->FirstChildElement("settings");
             
-            m_settings.m_chou3card = (ENUM_CHOU3CARD)settingsEle->IntAttribute("chou3zhang");
-            m_settings.m_right_hand = (ENUM_RIGHT_HAND)settingsEle->IntAttribute("righthand");
-            m_settings.m_time_score = (ENUM_TIME_SCORE)settingsEle->IntAttribute("time_score");
-            m_settings.m_action = (ENUM_ACTION)settingsEle->IntAttribute("action");
-            m_settings.m_big_card = (ENUM_BIG_CARD)settingsEle->IntAttribute("bigcard");
+//            m_settings.m_chou3card = (ENUM_CHOU3CARD)settingsEle->IntAttribute("chou3zhang");
+//            m_settings.m_right_hand = (ENUM_RIGHT_HAND)settingsEle->IntAttribute("righthand");
+//            m_settings.m_time_score = (ENUM_TIME_SCORE)settingsEle->IntAttribute("time_score");
+//            m_settings.m_action = (ENUM_ACTION)settingsEle->IntAttribute("action");
+//            m_settings.m_big_card = (ENUM_BIG_CARD)settingsEle->IntAttribute("bigcard");
             ///////////////////////////////////////////////////////////////////
             
             //////////////////解析统计分值节点，并且对内存数据赋值/////////////////////////////////////
@@ -376,27 +588,27 @@ namespace NSDataManage {
         return bResult;
     }
     
-    void DataManager::saveSettingsData(TagSettings &settings){
-        // 保存设置数据
-        m_settings.m_chou3card  = settings.m_chou3card;
-        m_settings.m_right_hand = settings.m_right_hand;
-        m_settings.m_time_score = settings.m_time_score;
-        m_settings.m_action     = settings.m_action;
-        m_settings.m_big_card   = settings.m_big_card;
-        
-        XMLElement *rootEle = m_pXml->RootElement();
-        
-        //////////////////解析settings节点,并且对内存数据赋值//////////////////////////
-        XMLElement *settingsEle = rootEle->FirstChildElement("settings");
-        
-        settingsEle->SetAttribute("chou3zhang", m_settings.m_chou3card);
-        settingsEle->SetAttribute("righthand", m_settings.m_right_hand);
-        settingsEle->SetAttribute("time_score", m_settings.m_time_score);
-        settingsEle->SetAttribute("action", m_settings.m_action);
-        settingsEle->SetAttribute("bigcard", m_settings.m_big_card);
-        // 保存xml文件
-        m_pXml->SaveFile(m_strXml.c_str());
-    }
+//    void DataManager::saveSettingsData(TagSettings &settings){
+//        // 保存设置数据
+//        m_settings.m_chou3card  = settings.m_chou3card;
+//        m_settings.m_right_hand = settings.m_right_hand;
+//        m_settings.m_time_score = settings.m_time_score;
+//        m_settings.m_action     = settings.m_action;
+//        m_settings.m_big_card   = settings.m_big_card;
+//        
+//        XMLElement *rootEle = m_pXml->RootElement();
+//        
+//        //////////////////解析settings节点,并且对内存数据赋值//////////////////////////
+//        XMLElement *settingsEle = rootEle->FirstChildElement("settings");
+//        
+//        settingsEle->SetAttribute("chou3zhang", m_settings.m_chou3card);
+//        settingsEle->SetAttribute("righthand", m_settings.m_right_hand);
+//        settingsEle->SetAttribute("time_score", m_settings.m_time_score);
+//        settingsEle->SetAttribute("action", m_settings.m_action);
+//        settingsEle->SetAttribute("bigcard", m_settings.m_big_card);
+//        // 保存xml文件
+//        m_pXml->SaveFile(m_strXml.c_str());
+//    }
     
     void DataManager::resetStatisticData(){
     
@@ -459,7 +671,7 @@ namespace NSDataManage {
         return &m_statistic;
     }
     
-    const TagSettings* DataManager::getSettings(){
-        return &m_settings;
-    }
+//    const TagSettings* DataManager::getSettings(){
+//        return &m_settings;
+//    }
 }

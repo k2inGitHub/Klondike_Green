@@ -53,6 +53,8 @@ public:
     
     void initValues();
     
+    void applySetupTheme(string name);
+    
     void showAskForSetupTheme(string name);
     
     void updateBadge(Ref *sender);

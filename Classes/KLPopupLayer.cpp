@@ -41,7 +41,7 @@ bool KLThanksGivingLayer::init(){
     
     auto bb = panel->getBoundingBox();
     {
-        Label *titleLbl = Label::createWithSystemFont(LocalizedString("TID_UI_HAPP_THANKS_GIVING"), "Arial", 36);
+        Label *titleLbl = Label::createWithSystemFont(LocalizedString("TID_UI_HAPPY_MERRY_CHRISTMAS"), "Arial", 36);
         titleLbl->setTextColor(Color4B::WHITE);
         titleLbl->setAlignment(TextHAlignment::CENTER);
         titleLbl->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
@@ -60,9 +60,11 @@ bool KLThanksGivingLayer::init(){
         btn->setPosition(ccRectBottom(bb) + Vec2(0, 90));
         btn->addClickEventListener([=](Ref*){
             this->removeFromParentAndCleanup(true);
-            DataManager::getInstance()->changeCardback(22);
-            DataManager::getInstance()->changeTheme(9);
-            __NotificationCenter::getInstance()->postNotification(NTFFactor::NTF_SETTING_REFRESH);
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+            iOSWrapper::showToSetupThemeAppPage(true);
+#else
+            DataManager::getInstance()->changeThemeSet("theme_set_6");
+#endif
         });
         addChild(btn);
         _shareBtn = btn;
@@ -84,12 +86,12 @@ bool KLThanksGivingLayer::init(){
     addChild(btn);
     _clostBtn = btn;
     
-    auto sp = Sprite::create("shared/theme/8.png");
+    auto sp = Sprite::create("shared/cardback/99.png");
     addChild(sp);
     sp->setPosition(ccRectLeft(bb) + Vec2(110, 0));
     _sp = sp;
     
-    auto label = Label::createWithSystemFont(LocalizedString("TID_UI_HAPP_THANKS_GIVING_CONTENT"), "Arial", 30);
+    auto label = Label::createWithSystemFont(LocalizedString("TID_UI_HAPPY_MERRY_CHRISTMAS_CONTENT"), "Arial", 30);
     label->setOverflow(Label::Overflow::SHRINK);
     auto labelSize = Size(400, 150);
     label->setContentSize(labelSize);
@@ -383,7 +385,7 @@ bool KLLoadingLayer::init(){
     
     _timer = 2;
     
-    auto bg = Sprite::create("shared/theme/1.jpg");
+    auto bg = Sprite::create(BG_FILENAME);
     bg->setPosition(VisibleRect::center());
     addChild(bg);
     _bg = bg;
@@ -492,9 +494,9 @@ bool KLIntroLayer::init(KLIntroLayer::IntroType introType){
     auto bb = panel->getBoundingBox();
     {
         auto title = LocalizedString("TID_UI_HOW TO PLAY");
-        if (_introType == IntroType::CustomCardbackTheme) {
-            title = LocalizedString("TID_UI_NEW_FEATURE_TITLE");
-        }
+//        if (_introType == IntroType::CustomCardbackTheme) {
+//            title = LocalizedString("TID_UI_NEW_FEATURE_TITLE");
+//        }
         Label *titleLbl = Label::createWithSystemFont(title, "Arial", 36);
         titleLbl->setTextColor(Color4B::WHITE);
         titleLbl->setAlignment(TextHAlignment::CENTER);
@@ -525,12 +527,12 @@ bool KLIntroLayer::init(KLIntroLayer::IntroType introType){
                     this->onClose();
                 }
                 
-                if (_introType == IntroType::CustomCardbackTheme) {
-                    auto la = Layer_CardBack::create();
-                    auto sc = Scene::create();
-                    sc->addChild(la);
-                    Director::getInstance()->pushScene(sc);
-                }
+//                if (_introType == IntroType::CustomCardbackTheme) {
+//                    auto la = Layer_CardBack::create();
+//                    auto sc = Scene::create();
+//                    sc->addChild(la);
+//                    Director::getInstance()->pushScene(sc);
+//                }
                 
                 
                 this->removeFromParentAndCleanup(true);
@@ -644,27 +646,28 @@ bool KLIntroLayer::init(KLIntroLayer::IntroType introType){
             _leftBtn->setVisible(false);
             _startButton->setVisible(false);
         }
-    } else if (_introType == IntroType::CustomCardbackTheme) {
-        
-        
-        Layout* layout = Layout::create();
-        layout->setContentSize(Size(500, 220));
-        layout->setBackGroundColor(Color3B::RED);
-        
-        Label *label = Label::createWithSystemFont(LocalizedString("TID_UI_NEW_FEATURE_CARDBACK"), "Arial", 30);
-        label->setContentSize(Size(500, 220));
-        label->setDimensions(500, 220);
-        label->setPosition(Vec2(layout->getContentSize().width / 2.0f, 60));
-        label->setOverflow(Label::Overflow::SHRINK);
-        
-        layout->addChild(label);
-        pageView->insertCustomItem(layout, 0);
-        
-        _startButton->setTitleText(LocalizedString("TID_UI_CONFIRM"));
-        
-        _startButton->setVisible(true);
-        pageView->setIndicatorEnabled(false);
     }
+//    else if (_introType == IntroType::CustomCardbackTheme) {
+//        
+//        
+//        Layout* layout = Layout::create();
+//        layout->setContentSize(Size(500, 220));
+//        layout->setBackGroundColor(Color3B::RED);
+//        
+//        Label *label = Label::createWithSystemFont(LocalizedString("TID_UI_NEW_FEATURE_CARDBACK"), "Arial", 30);
+//        label->setContentSize(Size(500, 220));
+//        label->setDimensions(500, 220);
+//        label->setPosition(Vec2(layout->getContentSize().width / 2.0f, 60));
+//        label->setOverflow(Label::Overflow::SHRINK);
+//        
+//        layout->addChild(label);
+//        pageView->insertCustomItem(layout, 0);
+//        
+//        _startButton->setTitleText(LocalizedString("TID_UI_CONFIRM"));
+//        
+//        _startButton->setVisible(true);
+//        pageView->setIndicatorEnabled(false);
+//    }
     
     
     
@@ -1957,12 +1960,12 @@ bool KLAllClearLayer::init(){
     auto icon = Sprite::create("JS_02.png");
     root->addChild(icon, 2);
     
-    auto label = Label::createWithSystemFont("ALL\nCLEARED!", "Arial", 42);
-    label->enableShadow(Color4B(180, 110, 30, 255));
+    auto label = Label::createWithSystemFont("ALL\nCLEARED!", "Arial", 40);
+    label->enableOutline(Color4B(159, 91, 23, 255), 3);
     label->setContentSize(Size(320, 125));
     label->setAlignment(TextHAlignment::CENTER, TextVAlignment::CENTER);
     label->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    label->setPosition(icon->getContentSize()/2);
+    label->setPosition(Vec2(icon->getContentSize()/2) + Vec2(0, 5));
     icon->addChild(label);
     
     root->setScale(0.001);

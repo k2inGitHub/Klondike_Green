@@ -129,11 +129,12 @@ class KLAlertLayer : public KTPauseLayer {
     
     Node *_bg;
     Node *_panel;
-    Node *_contentLbl;
     
     Vector<Node *> buttons;
     
 public:
+    
+    CC_SYNTHESIZE(Text*, _contentLbl, ContentLabel);
     
     std::string _title;
     
@@ -147,11 +148,11 @@ public:
     
     CREATE_FUNC(KLAlertLayer);
     
-    virtual void onEnter();
+    virtual void onEnter()override;
     
     virtual void updateLayout() override;
 
-    virtual bool init();
+    virtual bool init()override;
     
     static KLAlertLayer* show(std::string title, std::string content, std::string cancelButton, std::vector<std::string>otherButtons, KLAlertLayerTapCallback onTap);
     
@@ -388,7 +389,7 @@ public:
     
     enum class IntroType{
         First = 0,
-        CustomCardbackTheme,
+//        CustomCardbackTheme,
     };
     
     IntroType _introType;

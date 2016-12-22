@@ -4,20 +4,24 @@
 #include "cocos2d.h"
 // 全局变量
 namespace NSGlobal {
+    //remove
+    CC_DEPRECATED_ATTRIBUTE const int kNewCardbackMin = 21;
     
-    const int kNewCardbackMin = 21;
+    CC_DEPRECATED_ATTRIBUTE const int kNewCardbackMax = 22;
     
-    const int kNewCardbackMax = 22;
+    CC_DEPRECATED_ATTRIBUTE const int kNewThemeMin = 8;
     
-    const int kNewThemeMin = 8;
+    CC_DEPRECATED_ATTRIBUTE const int kNewThemeMax = 10;
     
-    const int kNewThemeMax = 10;
-    
-    const int kCardbackCount = 22;
-    
-    const int kThemeCount = 10;
+//    const int kCardbackCount = 22;
+//    
+//    const int kFaceCount = 4;
+//    
+//    const int kThemeCount = 10;
     
     const cocos2d::Size cardbackImageSize = cocos2d::Size(78, 124);
+    
+    static const char* BG_FILENAME = "back.jpg";
     
     static const char* kUpdateBadgeCardback = "UpdateBadgeCardback";
     

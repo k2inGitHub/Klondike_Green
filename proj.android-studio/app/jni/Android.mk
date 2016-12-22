@@ -63,6 +63,7 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../../Classes/HLOnlineConfigAndroid.cpp \
                    ../../../Classes/VungleWrapper.cpp \
                    ../../../Classes/HLNotificationAndroid.cpp \
+                   ../../../Classes/Item_Setting.cpp \
                    ../../../Classes/HLInterfaceAndroid.cpp
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../Classes

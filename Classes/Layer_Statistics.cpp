@@ -21,7 +21,7 @@ bool Layer_Statistics::init(){
     }
 
     auto size = VisibleRect::getVisibleRect().size;
-    auto sprite = Sprite::create("shared/theme/1.jpg");
+    auto sprite = Sprite::create(BG_FILENAME);
     
     sprite->setPosition(VisibleRect::center());
     this->addChild(sprite, -100);
@@ -71,7 +71,7 @@ bool Layer_Statistics::init(){
                 btnLost->setOpacity(255);
                 btnLost->setColor(Color3B(KL_GREEN));
                 btnLost->setTitleColor(Color3B::WHITE);
-                btnLost->getTitleRenderer()->enableShadow(Color4B::GRAY);
+//                btnLost->getTitleRenderer()->enableShadow(Color4B::GRAY);
             }
             
             if (_tabButtons.at(1) == btnGet) {
@@ -83,8 +83,8 @@ bool Layer_Statistics::init(){
             btnGet->setContentSize(Size(190, 72));
             btnGet->setOpacity(255);
             btnGet->setColor(Color3B::WHITE);
-            btnGet->setTitleColor(Color3B(KL_BROWN));
-            btnGet->getTitleRenderer()->enableShadow(Color4B::WHITE);
+            btnGet->setTitleColor(Color3B::WHITE);
+//            btnGet->getTitleRenderer()->enableShadow(Color4B::WHITE);
             _tabIdx = (int)_tabButtons.getIndex(btnGet);
             this->loadData(_tabIdx);
             

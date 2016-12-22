@@ -19,6 +19,8 @@ private:
     ImageView *_badge;
 public:
     
+    Button_Highlight();
+    
     enum class BadgeType{
         Simple,
         New,
@@ -39,6 +41,8 @@ public:
     void setSelected(bool value);
     
     CC_SYNTHESIZE(ImageView *, _icon, Icon);
+    
+    CC_SYNTHESIZE(Button*, _customButton, CustomButton);
     
     ImageView *_selectIcon;
     

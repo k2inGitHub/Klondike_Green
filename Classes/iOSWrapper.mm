@@ -15,6 +15,36 @@
 #include "Localization.hpp"
 #import "RootViewController.h"
 #import "KLManager.h"
+#include "HLAnalsytWrapper.hpp"
+#include "KLPopupLayer.hpp"
+#include "DataManager.h"
+using namespace NSDataManage;
+
+void iOSWrapper::showToSetupThemeAppPage(bool directly)
+{
+    
+    
+    
+//    function<void()> func = [=]()
+//    {
+        string url = HLAnalsytWrapper::stringValue("KL_SetupThemeURL", "https://itunes.apple.com/developer/huiping-zhang/id1150862111");
+        Application::getInstance()->openURL(url);
+//    };
+//    
+//    if(directly) {
+//        func();
+//        return;
+//    }
+//    
+//    //KT SYN
+//    vector<string> btns;
+//    btns.push_back(LocalizedString("TID_UI_CONFIRM"));
+//    KLAlertLayer::show("", LocalizedString("TID_UI_GOOGOLE_TO_DOWNLOAD_THEME"), LocalizedString("TID_UI_CANCEL"), btns, [=](KLAlertLayer *layer, int buttonIdx){
+//        if(buttonIdx == 1) {
+//            func();
+//        }
+//    });
+}
 
 void iOSWrapper::setStart(bool value){
     [KLManager sharedManager].isStart = value;

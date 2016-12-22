@@ -349,7 +349,8 @@
   /Users/songyang/Documents/CocosProjects/Unit/Klondike/proj.android-studio/../cocos2d/cocos/3d/../network/HttpCookie.h \
   jni/../../../Classes/Localization.hpp jni/../../../Classes/KLUtils.hpp \
   jni/../../../Classes/md5.h jni/../../../Classes/Cell_Setting.hpp \
-  jni/../../../Classes/Button_Highlight.hpp
+  jni/../../../Classes/Button_Highlight.hpp \
+  jni/../../../Classes/Item_Setting.hpp
 
 jni/../../../Classes/Cell_HighScore.hpp:
 
@@ -1062,3 +1063,5 @@ jni/../../../Classes/md5.h:
 jni/../../../Classes/Cell_Setting.hpp:
 
 jni/../../../Classes/Button_Highlight.hpp:
+
+jni/../../../Classes/Item_Setting.hpp:

@@ -62,9 +62,9 @@ void Trump::refresh() {
         textureName = mgr->getCardbackFile();
     } else {
         
-        char buf[64];
-        sprintf(buf,"shared/classic_%d/%d/%d.png",mgr->getFaceID(),_data->getSuit(), _data->getValue());
-        textureName = buf;
+//        char buf[64];
+//        sprintf(buf,"shared/classic_%d/%d/%d.png",mgr->getFaceID(),_data->getSuit(), _data->getValue());
+        textureName = mgr->getFace(mgr->getSelectFaceName())->getFile(_data->getSuit(), _data->getValue());
     }
 
     Rect rect = Rect(0, 0, float(SIZE_TEXTURE_X), float(SIZE_TEXTURE_Y));
@@ -98,7 +98,7 @@ void Trump::flip(const std::function<void ()> &func, const std::function<void()>
 
     // 翻转时间
     float flipSpeed;
-    switch (DataManager::getInstance()->getSettings()->m_action) {
+    switch (1) {
         case enum_action_1x:
             flipSpeed = TWEEN_CARD_FLIP_SPEED_1X;
             break;

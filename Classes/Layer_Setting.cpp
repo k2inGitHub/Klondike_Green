@@ -15,6 +15,18 @@
 #include "Audio.h"
 using namespace NSDataManage;
 
+
+const static char* NAME_SOUND = "NAME_SOUND";
+const static char* NAME_DRAW3 = "NAME_DRAW3";
+const static char* NAME_VEGAS_MODE = "NAME_VEGAS_MODE";
+const static char* NAME_VEGAS_ADD = "NAME_VEGAS_ADD";
+const static char* NAME_TIMER = "NAME_TIMER";
+const static char* NAME_LEFT_HAND = "NAME_LEFT_HAND";
+const static char* NAME_LANGUAGE = "NAME_LANGUAGE";
+const static char* NAME_AUTO_HINT = "NAME_AUTO_HINT";
+const static char* NAME_HOW_TO_PLAY = "NAME_HOW_TO_PLAY";
+
+
 #pragma mark - Layer_HowToPlay -
 
 void Layer_HowToPlay::updateLayout(){
@@ -52,7 +64,7 @@ bool Layer_HowToPlay::init(){
     }
     
     auto size = VisibleRect::getVisibleRect().size;
-    auto sprite = Sprite::create("shared/theme/1.jpg");
+    auto sprite = Sprite::create(BG_FILENAME);
     sprite->setPosition(VisibleRect::center());
     this->addChild(sprite, -100);
     _bg = sprite;
@@ -98,7 +110,7 @@ bool Layer_HowToPlay::init(){
                 btnLost->setOpacity(255);
                 btnLost->setColor(Color3B(KL_GREEN));
                 btnLost->setTitleColor(Color3B::WHITE);
-                btnLost->getTitleRenderer()->enableShadow(Color4B::GRAY);
+//                btnLost->getTitleRenderer()->enableShadow(Color4B::GRAY);
             }
             if (btnGet == _tabButtons.front() || btnGet == _tabButtons.back())
             {
@@ -110,8 +122,8 @@ bool Layer_HowToPlay::init(){
             btnGet->setContentSize(Size(140, 60));
             btnGet->setOpacity(255);
             btnGet->setColor(Color3B::WHITE);
-            btnGet->setTitleColor(Color3B(KL_BROWN));
-            btnGet->getTitleRenderer()->enableShadow(Color4B::WHITE);
+            btnGet->setTitleColor(Color3B::WHITE);
+//            btnGet->getTitleRenderer()->enableShadow(Color4B::WHITE);
             _tabIdx = (int)_tabButtons.getIndex(btnGet);
             this->loadData(_tabIdx);
             
@@ -270,6 +282,369 @@ bool Layer_Language::init(){
     return true;
 }
 
+#pragma mark - Layer_CustomTheme -
+
+Layer_CustomTheme::~Layer_CustomTheme(){
+    CC_SAFE_RELEASE_NULL(_rt);
+    __NotificationCenter::getInstance()->removeAllObservers(this);
+}
+
+void Layer_CustomTheme::onThemeFileCanceled(Ref *sender){
+
+}
+void Layer_CustomTheme::onThemeFileChanged(Ref *sender){
+    auto mgr = DataManager::getInstance();
+    mgr->setCustomSelectThemeName(mgr->getThemes().at(0)->getName());
+    
+    Director::getInstance()->getTextureCache()->removeTextureForKey(DataManager::getInstance()->getCacheThemeFile(true));
+    Director::getInstance()->getTextureCache()->removeTextureForKey(DataManager::getInstance()->getCacheThemeFile(false));
+    Director::getInstance()->getTextureCache()->removeTextureForKey(DataManager::getInstance()->getCachePreviewThemeFile());
+    
+//    reloadData();
+    runAction(Sequence::create(DelayTime::create(0.1), CallFunc::create([=](){
+
+        auto file = DataManager::getInstance()->getCachePreviewThemeFile();
+        auto rt = _rt;
+        
+        auto sp1 = Sprite::create(file);
+        sp1->setPosition(44, 131 * 0.5);
+        auto sp2 = Sprite::create("_outline.png");
+        sp2->setPosition(44, 131 * 0.5);
+        //    auto sp3 = Sprite::create("_light.png");
+        //    clip->addChild(sp3);
+        //    sp3->setPosition(Vec2(44, 131-2));
+        
+        //this->addChild(clip, 2048);
+        
+        rt->beginWithClear(0,0,0,0);
+        sp1->visit();
+        sp2->visit();
+        rt->end();
+        
+        
+        //rt->setPosition(100, 100);
+        //this->addChild(rt, 2048);
+        
+        
+        rt->saveToFile("theme.png", Image::Format::PNG, true, [&](RenderTexture*, const std::string& fullPath){
+            CCLOG("save success!!!");
+            Director::getInstance()->getTextureCache()->removeTextureForKey(file);
+            reloadData();
+            //        this->setClipContainer(nullptr);
+        });
+        
+        //    });
+        Director::getInstance()->getRenderer()->render();
+    }), NULL));
+}
+
+void Layer_CustomTheme::onCardbackFileCanceled(Ref *sender){
+//    if (dataArray.size() !=0 && dataArray[0].size() !=0 && dataArray[0][0] == "shared/cardback/0.png") {
+//        auto item = static_cast<Cell_CardBack *>(_listView->getItem(0));
+//        Button_Highlight*btn = item->getIconViews().at(1);
+//        btn->onClick(btn);
+//    }
+}
+
+void Layer_CustomTheme::onCardbackFileChanged(Ref *sender){
+    auto mgr = DataManager::getInstance();
+    mgr->setCustomSelectCardbackName(mgr->getCardbacks().at(0)->getName());
+
+    auto file = DataManager::getInstance()->getCacheCardbackFile();
+    Director::getInstance()->getTextureCache()->removeTextureForKey(file);
+    
+//    reloadData();
+    
+    runAction(Sequence::create(DelayTime::create(0.1), CallFunc::create([=](){
+    
+        auto sp1 = Sprite::create(file);
+        sp1->setPosition(44, 131 * 0.5);
+        auto sp2 = Sprite::create("_outline.png");
+        sp2->setPosition(44, 131 * 0.5);
+        
+        _rt->beginWithClear(0,0,0,0);
+        sp1->visit();
+        sp2->visit();
+        _rt->end();
+        
+        _rt->saveToFile("cardback.png", Image::Format::PNG, true, [&](RenderTexture*, const std::string& fullPath){
+            Director::getInstance()->getTextureCache()->removeTextureForKey(fullPath);
+            reloadData();
+        });
+        Director::getInstance()->getRenderer()->render();
+        
+    }), NULL));
+}
+
+void Layer_CustomTheme::updateLayout(){
+    
+    bool flag = winSize.height > winSize.width;
+    _bg->setScale(winSize.width/640.f, winSize.height/1136.f);
+    _bg->setPosition(VisibleRect::center());
+    auto size = VisibleRect::getVisibleRect().size;
+    float bottomOffset = flag ? 90 : 0;
+    size.height -= (getNavigationBar()->getContentSize().height + bottomOffset);
+    
+    _listView->setContentSize(size);
+    _listView->setPosition(Vec2(0, bottomOffset));
+
+}
+
+bool Layer_CustomTheme::init(){
+    if (!KTPauseLayer::init()) {
+        return false;
+    }
+    
+    _rt = RenderTexture::create(88, 131);
+    _rt->retain();
+    
+//    _clipContainer = nullptr;
+    auto size = VisibleRect::getVisibleRect().size;
+    auto sprite = Sprite::create(BG_FILENAME);
+    
+    sprite->setPosition(VisibleRect::center());
+    this->addChild(sprite, -100);
+    _bg = sprite;
+    
+    setNavigationBarEnable(true);
+    auto navBar = getNavigationBar();
+    
+    float bottomOffset = 90;
+    size.height -= (getNavigationBar()->getContentSize().height + bottomOffset);
+    getNavigationBar()->setTitle(LocalizedString("TID_UI_CUSTOM"));
+    
+    Vector<MenuItem *>rightItems;
+    auto itemQuit = MenuItemImage::create("close.png", "close1.png", [=](Ref *sender){
+        Director::getInstance()->popScene();
+    });
+    rightItems.pushBack(itemQuit);
+    navBar->setRightBarItems(rightItems);
+    
+    Vector<MenuItem *>leftItems;
+    auto space = MenuItemImage::create("null.png", "null.png", [=](Ref *sender){
+        
+    });
+    space->setContentSize(itemQuit->getContentSize());
+    leftItems.pushBack(space);
+    navBar->setLeftBarItems(leftItems);
+    
+    ListView* listView = ListView::create();
+    // set list view ex direction
+    listView->setDirection(ui::ScrollView::Direction::VERTICAL);
+    listView->setBounceEnabled(true);
+    listView->setScrollBarEnabled(true);
+    
+    listView->setScrollBarColor(Color3B::BLACK);
+    listView->setScrollBarOpacity(64);
+    listView->setScrollBarAutoHideEnabled(false);
+    
+    CCLOG("width = %d", (int)listView->getScrollBarWidth());
+    
+    listView->setContentSize(size);
+    listView->setPosition(Vec2(0, bottomOffset));
+    
+    this->addChild(listView);
+    
+    listView->setItemModel(cellForDisplay());
+    listView->addEventListener([=](Ref*, ListView::EventType type){
+        
+        if (type == ListView::EventType::ON_SELECTED_ITEM_END) {
+            //            int idx = listView->getCurSelectedIndex();
+            //            CCLOG("select = %d", idx);
+        }
+    });
+    _listView = listView;
+    
+    reloadData();
+    
+    __NotificationCenter::getInstance()->addObserver(this, callfuncO_selector(Layer_CustomTheme::onCardbackFileChanged), kOnCardbackFileChanged, nullptr);
+    __NotificationCenter::getInstance()->addObserver(this, callfuncO_selector(Layer_CustomTheme::onCardbackFileCanceled), kOnCardbackFileCanceled, nullptr);
+    __NotificationCenter::getInstance()->addObserver(this, callfuncO_selector(Layer_CustomTheme::onThemeFileChanged), kOnThemeFileChanged, nullptr);
+    __NotificationCenter::getInstance()->addObserver(this, callfuncO_selector(Layer_CustomTheme::onThemeFileCanceled), kOnThemeFileCanceled, nullptr);
+    
+    __NotificationCenter::getInstance()->addObserver(this, callfuncO_selector(Layer_CustomTheme::updateBadge), kUpdateBadgeCardback, nullptr);
+    
+    __NotificationCenter::getInstance()->addObserver(this, callfuncO_selector(Layer_CustomTheme::updateBadge), kUpdateBadgeTheme, nullptr);
+    
+    return true;
+}
+
+void Layer_CustomTheme::updateBadge(Ref *sender){
+    reloadData();
+}
+
+Layout *Layer_CustomTheme::cellForDisplay(){
+    return Cell_CustomTheme::create();
+}
+
+void Layer_CustomTheme::reloadData(){
+    _listView->removeAllItems();
+    auto mgr = DataManager::getInstance();
+    string titles[] = {"TID_UI_CARD FACES", "TID_UI_CARD BACKS", "TID_UI_BACKGROUND"};
+    
+    for(int i = 0;i < 3; i++){
+        _listView->pushBackDefaultItem();
+        auto cell = static_cast<Cell_CustomTheme *>(_listView->getItem(i));
+        cell->getTitleLabel()->setString(LocalizedString(titles[i]));
+        Vector<PreviewItem *> dataArray;
+        int defaultIdx = 0;
+        if (i == 0) {
+            for (auto item : mgr->getFaces()) {
+                dataArray.pushBack(item);
+            }
+            defaultIdx = (int)mgr->getFaces().getIndex(mgr->getFace(mgr->getCustomSelectFaceName()));
+        } else if (i == 1) {
+            for (auto item : mgr->getCardbacks()) {
+                dataArray.pushBack(item);
+            }
+            
+            defaultIdx = (int)mgr->getCardbacks().getIndex(mgr->getCardback(mgr->getCustomSelectCardbackName()));
+
+        } else if (i ==2) {
+            for (auto item : mgr->getThemes()) {
+                dataArray.pushBack(item);
+            }
+            defaultIdx = (int)mgr->getThemes().getIndex(mgr->getTheme(mgr->getCustomSelectThemeName()));
+
+        }
+        cell->reloadData(dataArray);
+       
+        auto subList = cell->getListView();
+        
+        
+        
+        auto items = subList->getItems();
+//        subList->setInnerContainerPosition(Vec2(-20, 0));
+//        subList->setInnerContainerPosition(Vec2(20, 0));
+//        subList->setInnerContainerPosition(Vec2(0, 0));
+        //tag2
+        for (int j = 0; j < items.size(); j++) {
+            auto subCell = static_cast<Cell_CustomThemeSubView *>(items.at(j));
+            
+//            subCell->addTouchEventListener([=](Ref*,Widget::TouchEventType type){
+//                if (type == Widget::TouchEventType::MOVED) {
+//                    _listView->setTouchEnabled(false);
+//                }
+//            });
+            
+            if (i == 1) {
+                //牌被特别
+                auto cardbackItem = mgr->getCardbacks().at(j);
+                bool flag = false;
+                if (j == 0) {
+                    
+//                    if (cardbackItem->getPreviewFile() == mgr->getCacheCardbackFile()) {
+//                        auto iv = subCell->getIconView()->getIcon();
+//                        auto oldSize = iv->getContentSize();
+//                        auto newSize = oldSize + Size(-10,-4);
+//                        iv->setContentSize(newSize);
+//                        {
+//                            ImageView *iv2 = ImageView::create("_outline.png");
+//                            iv2->setScale9Enabled(true);
+//                            iv2->setCapInsets(Rect(0, 0, 88, 131));
+//                            iv2->setPosition(iv->getPosition());
+//                            iv2->setContentSize(oldSize);
+//                            subCell->addChild(iv2, 32);
+//                        }
+//                    }
+                    if (UserDefault::getInstance()->getBoolForKey("KL_CUSTOM_CARDBACK_CLICK") == false) {
+                        subCell->getIconView()->setBadgeType(Button_Highlight::BadgeType::Simple);
+                        flag = true;
+                    }
+                } else if (cardbackItem->getIsNew() && UserDefault::getInstance()->getBoolForKey(StringUtils::format("KL_CARDBACK_%s_CLICK", cardbackItem->getName().c_str()).c_str()) == false) {
+                    subCell->getIconView()->setBadgeType(Button_Highlight::BadgeType::New);
+                    flag = true;
+                }
+                subCell->getIconView()->setBadgeEnabled(flag);
+            } else if (i == 2) {
+            
+                bool flag = false;
+                auto themeItem = mgr->getThemes().at(j);
+                if (j == 0) {
+                    if (UserDefault::getInstance()->getBoolForKey("KL_CUSTOM_THEME_CLICK") == false) {
+                        flag = true;
+                        subCell->getIconView()->setBadgeType(Button_Highlight::BadgeType::Simple);
+                    }
+//                    if (themeItem->getPreviewFile() == mgr->getCachePreviewThemeFile()) {
+//                        auto iv = subCell->getIconView()->getIcon();
+//                        auto oldSize = iv->getContentSize();
+//                        auto newSize = oldSize + Size(-10,-4);
+//                        iv->setContentSize(newSize);
+//                        {
+//                            ImageView *iv2 = ImageView::create("_outline.png");
+//                            iv2->setScale9Enabled(true);
+//                            iv2->setCapInsets(Rect(0, 0, 88, 131));
+//                            iv2->setPosition(iv->getPosition());
+//                            iv2->setContentSize(oldSize);
+//                            subCell->addChild(iv2, 32);
+//                        }
+//                        
+//                    }
+                    
+                } else if (themeItem->getIsNew() && UserDefault::getInstance()->getBoolForKey(StringUtils::format("KL_THEME_%s_CLICK", themeItem->getName().c_str()).c_str()) == false) {
+                    flag = true;
+                    subCell->getIconView()->setBadgeType(Button_Highlight::BadgeType::New);
+                }
+                subCell->getIconView()->setBadgeEnabled(flag);
+            }
+            
+            
+            subCell->getIconView()->onClick = [=](Button_Highlight *sender){
+                
+                auto current = static_cast<Cell_CustomThemeSubView *>(sender->getParent());
+
+                bool canSelect = true;
+                int idx = (int)subList->getIndex(current);
+                if (i == 0) {
+                    mgr->setCustomSelectFaceName(mgr->getFaces().at(idx)->getName());
+                } else if (i == 1) {
+                    
+                    if(idx == 2 && !DataManager::getInstance()->getFirstShared()){
+                        canSelect = false;
+                        auto la = KLShareInfoLayer::create();
+                        this->addChild(la);
+                    }
+                    else if(idx == 0){
+                        iOSWrapper::showImagePicker();
+                        canSelect = false;
+                        
+                        UserDefault::getInstance()->setBoolForKey("KL_CUSTOM_CARDBACK_CLICK", true);
+                        UserDefault::getInstance()->flush();
+                        __NotificationCenter::getInstance()->postNotification(kUpdateBadgeCardback);
+                    }
+                    else {
+                        mgr->setCustomSelectCardbackName(mgr->getCardbacks().at(idx)->getName());
+                    }
+                    
+                } else if (i == 2) {
+                    
+                    if(idx == 0) {
+                        iOSWrapper::showThemePicker();
+                        
+                        UserDefault::getInstance()->setBoolForKey("KL_CUSTOM_THEME_CLICK", true);
+                        UserDefault::getInstance()->flush();
+                        __NotificationCenter::getInstance()->postNotification(kUpdateBadgeTheme);
+                        
+                        canSelect = false;
+                    }
+                    else {
+                        mgr->setCustomSelectThemeName(mgr->getThemes().at(idx)->getName());
+                    }
+                }
+                
+                if(canSelect){
+                    for(auto item : subList->getItems()){
+                        auto cell = static_cast<Cell_CustomThemeSubView *>(item);
+                        cell->getIconView()->setSelected(false);
+                    }
+                    sender->setSelected(true);
+                }
+            };
+        }
+        static_cast<Cell_CustomThemeSubView *>(subList->getItem(defaultIdx))->getIconView()->setSelected(true);
+    }
+}
+
 #pragma mark - Layer_Select -
 
 void Layer_Select::updateLayout(){
@@ -293,7 +668,7 @@ bool Layer_Select::init(){
         return false;
     }
     auto size = VisibleRect::getVisibleRect().size;
-    auto sprite = Sprite::create("shared/theme/1.jpg");
+    auto sprite = Sprite::create(BG_FILENAME);
     
     sprite->setPosition(VisibleRect::center());
     this->addChild(sprite, -100);
@@ -340,6 +715,7 @@ bool Layer_Select::init(){
 //                Node *n = (Node *)pSender;
 //                this->removeFromParentAndCleanup(true);
                 Director::getInstance()->popScene();
+                this->onCancel();
             }
         });
         addChild(btn);
@@ -372,11 +748,180 @@ Layout *Layer_Select::cellForDisplay(){
 void Layer_Select::reloadData(){
 
     
+    
+    
 }
 void Layer_Select::onConfirm(){
 
     
 }
+
+void Layer_Select::onCancel(){
+}
+
+#pragma mark - Layer_ThemeSet -
+
+Layer_ThemeSet::~Layer_ThemeSet(){
+
+}
+
+Layout *Layer_ThemeSet::cellForDisplay(){
+    return Cell_ThemeSet::create();
+}
+
+void Layer_ThemeSet::reloadData(){
+    
+    auto mgr = DataManager::getInstance();
+    _listView->removeAllItems();
+
+    int num = (int)mgr->getThemeSets().size();
+    int cellNum = ceil(num / 3.f);
+    function<void()> customThemeFunc = [=](){
+        auto la = Layer_CustomTheme::create();
+        auto sc = Scene::create();
+        sc->addChild(la);
+        Director::getInstance()->pushScene(sc);
+    };
+    
+    for (int i = 0; i < cellNum; i++) {
+        _listView->pushBackDefaultItem();
+        auto cell = static_cast<Cell_ThemeSet *>( _listView->getItem(i) );
+
+        for (int j = 0; j < 3; j++) {
+            int idx = i*3+j;
+            Button_Highlight* iconView = cell->getIconViews().at(j);
+
+            if (idx < num) {
+                auto item = mgr->getThemeSets().at(idx);
+                if (item->getName() == "theme_set_1") {
+                    auto viewWidth = iconView->getContentSize().width;
+                    Button *btn = KTFactory::createButton("B_green.png", "B_green0.png", "B_NO.png", LocalizedString("TID_UI_CUSTOM"), 20, "Arial", Size(viewWidth-40, 60));
+                    iconView->addChild(btn, 64);
+                    btn->setPosition(Vec2(viewWidth/2, 50));
+                    auto titleRender = btn->getTitleRenderer();
+                    titleRender->setPositionY(titleRender->getPositionY() + 5);
+                    iconView->setCustomButton(btn);
+                    
+                    btn->addClickEventListener([=](Ref *sender){
+                        customThemeFunc();
+                    });
+                }
+                iconView->getIcon()->loadTexture(item->getPreviewFile());
+                bool flag = false;
+                if (item->getIsNew() && UserDefault::getInstance()->getBoolForKey(StringUtils::format("KL_THEME_SET_%s_CLICK", item->getName().c_str()).c_str()) == false) {
+                    flag = true;
+                    if(item->getName() == "theme_set_1") {
+                        iconView->setBadgeType(Button_Highlight::BadgeType::Simple);
+
+                    } else {
+                        iconView->setBadgeType(Button_Highlight::BadgeType::New);
+                    }
+                }
+                iconView->setBadgeEnabled(flag);
+                
+                iconView->onClick = [=](Button_Highlight *sender){
+                    auto current = static_cast<Cell_ThemeSet *>(sender->getParent()->getParent());
+                    auto x = current->getIconViews().getIndex(sender);
+                    auto y = _listView->getIndex(current);
+                    int idx = int(y * 3 + x);
+                    auto item = mgr->getThemeSets().at(idx);
+                    
+                    if (item->getName() == "theme_set_0") {
+                        iOSWrapper::showToSetupThemeAppPage();
+                    } else {
+                        auto customItem = mgr->getThemeSet("theme_set_1");
+                        auto customIdx = mgr->getThemeSets().getIndex(customItem);
+                        bool flag = _idx == customIdx && idx == customIdx && _inited;
+                        
+                        _idx = idx;
+                        for(auto item : _listView->getItems()){
+                            auto cell = static_cast<Cell_ThemeSet *>(item);
+                            for(auto btn : cell->getIconViews()){
+                                btn->setSelected(false);
+                            }
+                        }
+                        
+                        sender->setSelected(true);
+                        
+                        
+                        auto firstCell = static_cast<Cell_ThemeSet *>(_listView->getItem(customIdx/3));
+                        auto firstView = firstCell->getIconViews().at(customIdx%3);
+                        firstView->getCustomButton()->setEnabled(_idx == customIdx);
+                        
+                        if(flag) {
+                            customThemeFunc();
+                        }
+                    }
+                };
+            } else {
+                iconView->setVisible(false);
+            }
+        }
+    }
+    
+    int x = _lastIdx%3;
+    int y = _lastIdx/3;
+    auto firstCell = static_cast<Cell_ThemeSet *>(_listView->getItem(y));
+    auto firstView = firstCell->getIconViews().at(x);
+    firstView->onClick(firstView);
+}
+
+void Layer_ThemeSet::onConfirm() {
+    
+    
+}
+
+void Layer_ThemeSet::updateLayout(){
+    
+    Layer_Select::updateLayout();
+    bool flag = winSize.height > winSize.width;
+    auto size = VisibleRect::getVisibleRect().size;
+
+    float bottomOffset = flag ? 90 : 0;
+    size.height -= (getNavigationBar()->getContentSize().height + bottomOffset);
+    
+    _listView->setContentSize(size);
+    _listView->setPosition(Vec2(0, bottomOffset));
+}
+
+
+bool Layer_ThemeSet::init(){
+    _inited = false;
+    auto mgr = DataManager::getInstance();
+    _lastIdx = _idx = (int)mgr->getThemeSets().getIndex(mgr->getThemeSet(mgr->getSelectThemeSetName()));
+    
+    if (!Layer_Select::init()) {
+        return false;
+    }
+    auto navBar = getNavigationBar();
+    navBar->setTitle(LocalizedString("TID_UI_CHANGE BACKGROUND"));
+    _cancelBtn->setVisible(false);
+    _submitBtn->setVisible(false);
+    
+    Vector<MenuItem *>rightItems;
+    auto itemQuit = MenuItemImage::create("close.png", "close1.png", [=](Ref *sender){
+        auto mgr = DataManager::getInstance();
+        auto item = mgr->getThemeSets().at(_idx);
+        mgr->changeThemeSet(item->getName());
+        
+        Director::getInstance()->popScene();
+
+    });
+    rightItems.pushBack(itemQuit);
+    navBar->setRightBarItems(rightItems);
+    
+    Vector<MenuItem *>leftItems;
+    auto space = MenuItemImage::create("null.png", "null.png");
+    space->setContentSize(itemQuit->getContentSize());
+    leftItems.pushBack(space);
+    navBar->setLeftBarItems(leftItems);
+    
+    _inited = true;
+    
+    return true;
+}
+
+/*
 
 #pragma mark - Layer_Themes -
 
@@ -387,8 +932,9 @@ Layer_Themes::~Layer_Themes(){
 }
 
 bool Layer_Themes::init(){
-    _idx = DataManager::getInstance()->getThemeID() - 1;
-
+    auto mgr = DataManager::getInstance();
+    _idx = (int)mgr->getThemes().getIndex(mgr->getTheme(mgr->getCustomSelectThemeName()));
+    
     if (!Layer_Select::init()) {
         return false;
     }
@@ -416,17 +962,21 @@ bool Layer_Themes::init(){
     return true;
 }
 void Layer_Themes::onThemeFileCanceled(Ref *sender){
-    if (DataManager::getInstance()->findTheme(0)->getName() == "theme_0") {
+    if(_idx == 0) {
         auto item = static_cast<Cell_CardBack *>(_listView->getItem(0));
         Button_Highlight*btn = item->getIconViews().at(1);
         btn->onClick(btn);
+        {
+            auto item = DataManager::getInstance()->getTheme(0);
+            item->setBgFile("shared/theme/0.jpg");
+            item->setPreviewFile("shared/theme/0.png");
+        }
     }
 }
 void Layer_Themes::onThemeFileChanged(Ref *sender){
 
     DataManager *mgr = DataManager::getInstance();
-    auto item = DataManager::getInstance()->findTheme(0);
-    item->setName("cache");
+    auto item = DataManager::getInstance()->getTheme(0);
     item->setBgFile(mgr->getCacheThemeFile(true));
     item->setPreviewFile(mgr->getCachePreviewThemeFile());
     
@@ -479,11 +1029,14 @@ void Layer_Themes::onThemeFileChanged(Ref *sender){
 Layout *Layer_Themes::cellForDisplay(){
     return Cell_CardBack::create();
 }
+
+//tag1
 void Layer_Themes::reloadData(){
     
+    auto mgr = DataManager::getInstance();
     _listView->removeAllItems();
 
-    int num = DataManager::getInstance()->getThemeCount();
+    int num = mgr->getThemeCount();
     int cellNum = ceil(num * 0.25);
     CCLOG("%s", StringUtils::format("num = %d", num).c_str());
     CCLOG("%s", StringUtils::format("cellNum = %d", cellNum).c_str());
@@ -500,19 +1053,21 @@ void Layer_Themes::reloadData(){
             
             int dataIdx = (i * 4 + j);
             
-            bool flag = false;
-            if (dataIdx== 0 && (UserDefault::getInstance()->getBoolForKey("KL_CUSTOM_THEME_CLICK") == false)) {
-                flag = true;
-                iconView->setBadgeType(Button_Highlight::BadgeType::Simple);
-            } else if ((dataIdx >= kNewThemeMin && dataIdx <= kNewThemeMax) && UserDefault::getInstance()->getBoolForKey(StringUtils::format("KL_THEME_%d_CLICK", dataIdx).c_str()) == false) {
-                flag = true;
-                iconView->setBadgeType(Button_Highlight::BadgeType::New);
-            }
-            iconView->setBadgeEnabled(flag);
-            
             if (dataIdx < num) {
+                
+                auto item = mgr->getThemes().at(dataIdx);
+                
+                bool flag = false;
+                if (dataIdx== 0 && (UserDefault::getInstance()->getBoolForKey("KL_CUSTOM_THEME_CLICK") == false)) {
+                    flag = true;
+                    iconView->setBadgeType(Button_Highlight::BadgeType::Simple);
+                } else if (item->getIsNew() && UserDefault::getInstance()->getBoolForKey(StringUtils::format("KL_THEME_%s_CLICK", item->getName().c_str()).c_str()) == false) {
+                    flag = true;
+                    iconView->setBadgeType(Button_Highlight::BadgeType::New);
+                }
+                iconView->setBadgeEnabled(flag);
+                
                 iconView->getAddIcon()->setVisible(i==0 && j == 0);
-                auto item = DataManager::getInstance()->findTheme(dataIdx);
                 iconView->getIcon()->loadTexture(item->getPreviewFile());
                 iconView->onClick = [=](Button_Highlight *sender){
                     
@@ -542,9 +1097,37 @@ void Layer_Themes::reloadData(){
     auto cell = static_cast<Cell_CardBack *>( _listView->getItem(y) );
     cell->getIconViews().at(x)->setSelected(true);
 }
-void Layer_Themes::onConfirm(){
-    DataManager::getInstance()->changeTheme(_idx+1);
+
+void Layer_Themes::onCancel(){
+    auto mgr = DataManager::getInstance();
+    string name = mgr->getCustomSelectThemeName();
+    auto item = mgr->getTheme(0);
+    if(name == "theme_1"){
+        item->setBgFile(mgr->getCacheThemeFile(true));
+        item->setPreviewFile(mgr->getCachePreviewThemeFile());
+    } else {
+        item->setBgFile("shared/theme/0.jpg");
+        item->setPreviewFile("shared/theme/0.png");
+    }
 }
+
+void Layer_Themes::onConfirm(){
+    auto mgr = DataManager::getInstance();
+    string name = mgr->getThemes().at(_idx)->getName();
+    CCLOG("name = %s", name.c_str());
+    mgr->changeTheme(name);
+    
+    auto item = DataManager::getInstance()->getTheme(0);
+    
+    if(name == "theme_1"){
+        item->setBgFile(mgr->getCacheThemeFile(true));
+        item->setPreviewFile(mgr->getCachePreviewThemeFile());
+    } else {
+        item->setBgFile("shared/theme/0.jpg");
+        item->setPreviewFile("shared/theme/0.png");
+    }
+}
+
 
 #pragma mark - Layer_CardBack -
 
@@ -555,7 +1138,8 @@ Layer_CardBack::~Layer_CardBack(){
 }
 
 bool Layer_CardBack::init(){
-    _idx = DataManager::getInstance()->getCardbackID() - 1;
+    auto mgr = DataManager::getInstance();
+    _idx = (int)mgr->getCardbacks().getIndex(mgr->getCardback(mgr->getSelectCardbackName()));
     if (!Layer_Select::init()) {
         return false;
     }
@@ -610,13 +1194,15 @@ void Layer_CardBack::onCardbackFileChanged(Ref *sender){
 Layout *Layer_CardBack::cellForDisplay(){
     return Cell_CardBack::create();
 }
+
+
 void Layer_CardBack::reloadData(){
-    
+    auto mgr = DataManager::getInstance();
     dataArray.clear();
     _listView->removeAllItems();
     
-    int num = kCardbackCount + 1;
-    bool flag = DataManager::getInstance()->getFirstShared();
+    int num = (int)mgr->getCardbacks().size();
+    bool flag = mgr->getFirstShared();
     int max = ceil(num * 0.25) * 4;
     for (int i = 0; i < max; i++) {
         
@@ -628,13 +1214,11 @@ void Layer_CardBack::reloadData(){
             dataArray.push_back(row);
         }
         if (i < num) {
-            char str[64];
-            
+            auto item = mgr->getCardbacks().at(i);
             if(i == 0 && _idx == 0){
-                dataArray[y].push_back(DataManager::getInstance()->getCacheCardbackFile());
+                dataArray[y].push_back(mgr->getCacheCardbackFile());
             } else {
-                sprintf(str, "shared/cardback/%d.png", i);
-                dataArray[y].push_back(str);
+                dataArray[y].push_back(item->getPreviewFile());
             }
         } else {
             dataArray[y].push_back("");
@@ -655,18 +1239,20 @@ void Layer_CardBack::reloadData(){
         for(int j = 0; j < 4;j++){
             int dataIdx = (i * 4 + j);
             
+            
             auto iconView = cell->getIconViews().at(j);
             
             string name = dataArray[i][j];
             if (name.empty()) {
                 iconView->setVisible(false);
             } else {
+                auto item = mgr->getCardbacks().at(dataIdx);
                 iconView->getAddIcon()->setVisible(i==0 && j == 0);
                 bool flag = false;
                 if (i == 0 && j == 0 && (UserDefault::getInstance()->getBoolForKey("KL_CUSTOM_CARDBACK_CLICK") == false)) {
                     flag = true;
                     iconView->setBadgeType(Button_Highlight::BadgeType::Simple);
-                } else if (dataIdx >= kNewCardbackMin && dataIdx <= kNewCardbackMax && UserDefault::getInstance()->getBoolForKey(StringUtils::format("KL_CARDBACK_%d_CLICK", dataIdx).c_str()) == false) {
+                } else if (item->getIsNew() && UserDefault::getInstance()->getBoolForKey(StringUtils::format("KL_CARDBACK_%s_CLICK", item->getName().c_str()).c_str()) == false) {
                     flag = true;
                     iconView->setBadgeType(Button_Highlight::BadgeType::New);
                 }
@@ -706,7 +1292,8 @@ void Layer_CardBack::reloadData(){
     
 }
 void Layer_CardBack::onConfirm(){
-    DataManager::getInstance()->changeCardback(_idx+1);
+    auto mgr = DataManager::getInstance();
+    mgr->changeCardback(mgr->getCardbacks().at(_idx)->getName());
 }
 
 #pragma mark - Layer_Faces -
@@ -725,11 +1312,10 @@ Layout *Layer_Faces::cellForDisplay(){
     return Cell_Faces::create();
 }
 void Layer_Faces::reloadData(){
-    for (int i = 0; i < 4; i++) {
-        char str[64];
-        sprintf(str, "shared/cardstyle_%d.png", i+1);
-        dataArray.push_back(str);
-    }
+    auto mgr = DataManager::getInstance();
+    auto dataArray = mgr->getFaces();
+    auto item = mgr->getFace(mgr->getSelectFaceName());
+    
     
     for (int i = 0; i < dataArray.size(); i++) {
         _listView->pushBackDefaultItem();
@@ -737,31 +1323,33 @@ void Layer_Faces::reloadData(){
     
     for (int i = 0; i < dataArray.size(); i++) {
         auto cell = static_cast<Cell_Faces *>( _listView->getItem(i) );
-        cell->getIconView()->getIcon()->loadTexture(dataArray[i]);
+        auto item = dataArray.at(i);
+        cell->getIconView()->getIcon()->loadTexture(item->getPreviewFile());
         cell->getIconView()->onClick = [=](Button_Highlight *sender){
         
             for(auto item : _listView->getItems()){
                 auto cell = static_cast<Cell_Faces *>(item);
                 cell->getIconView()->setSelected(false);
             }
-            
             auto current = static_cast<Cell_Faces *>(sender->getParent());
             sender->setSelected(true);
             _idx = (int)_listView->getIndex(current);
         };
     }
     
-    _idx = DataManager::getInstance()->getFaceID() - 1;
+    _idx = (int)dataArray.getIndex(item);;
     auto cell = static_cast<Cell_Faces *>( _listView->getItem(_idx) );
     cell->getIconView()->setSelected(true);
 }
 void Layer_Faces::onConfirm(){
+    auto mgr = DataManager::getInstance();
+    auto dataArray = mgr->getFaces();
     HLAnalsytWrapper::event("SetFaces");
-    DataManager::getInstance()->setFaceID(_idx + 1);
+    DataManager::getInstance()->setCustomSelectFaceName(dataArray.at(_idx)->getName());
     __NotificationCenter::getInstance()->postNotification(NSGlobal:: NTFFactor::NTF_SETTING_REFRESH);
-
 }
 
+ */
 
 #pragma mark - Layer_Setting -
 
@@ -787,11 +1375,11 @@ void Layer_Setting::loadData(){
     _listView->removeAllItems();
     
     auto dataMgr = DataManager::getInstance();
-    auto tagSettings = dataMgr->getSettings();
     
     char str[64];
     {
         ValueMap map;
+        map["name"] = Value(NAME_SOUND);
         map["title"] = Value(LocalizedString("TID_UI_SOUND"));
         map["button"] = Value("sw");
         map["value"] = Value((int)dataMgr->isSoundOn());
@@ -799,14 +1387,16 @@ void Layer_Setting::loadData(){
     }
     {
         ValueMap map;
+        map["name"] = Value(NAME_DRAW3);
         map["title"] = Value(LocalizedString("TID_UI_DRAW3"));
         map["button"] = Value("sw");
-        map["value"] = Value((int)tagSettings->m_chou3card);
+        map["value"] = Value((int)dataMgr->isChow3Card());
         dataArray.push_back(Value(map));
     }
     
     {
         ValueMap map;
+        map["name"] = Value(NAME_VEGAS_MODE);
         map["title"] = Value(LocalizedString("TID_UI_VEGAS MODE"));
         map["button"] = Value("sw");
         map["value"] = Value((int)DataManager::getInstance()->isVegasOn());
@@ -815,6 +1405,7 @@ void Layer_Setting::loadData(){
     
     {
         ValueMap map;
+        map["name"] = Value(NAME_VEGAS_ADD);
         map["title"] = Value(LocalizedString("TID_UI_VEGAS CUMULATIVE"));
         map["button"] = Value("sw");
         map["value"] = Value((int)DataManager::getInstance()->isVegasScoreAdd());
@@ -823,45 +1414,50 @@ void Layer_Setting::loadData(){
     
     {
         ValueMap map;
+        map["name"] = Value(NAME_TIMER);
         map["title"] = Value(LocalizedString("TID_UI_TIMER MODE"));
         map["button"] = Value("sw");
-        map["value"] = Value((int)tagSettings->m_time_score);
+        map["value"] = Value((int)dataMgr->isShowMatchInfo());
         dataArray.push_back(Value(map));
     }
     {
         ValueMap map;
+        map["name"] = Value(NAME_LEFT_HAND);
         map["title"] = Value(LocalizedString("TID_UI_LEFT HANDED"));
         map["button"] = Value("sw");
-        map["value"] = Value((int)tagSettings->m_right_hand);
+        map["value"] = Value((int)dataMgr->isUseRightHand());
         dataArray.push_back(Value(map));
     }
+//    {
+//        ValueMap map;
+//        map["title"] = Value(LocalizedString("TID_UI_CARD FACES"));
+//        map["button"] = Value("img");
+//        map["value"] = Value(0);
+////        sprintf(str, "shared/cardstyle_%d.png", DataManager::getInstance()->getFaceID());
+//        map["img"] = Value(dataMgr->getFace(dataMgr->getSelectFaceName())->getPreviewFile().c_str());
+//        dataArray.push_back(Value(map));
+//    }
+//    {
+//        ValueMap map;
+//        map["title"] = Value(LocalizedString("TID_UI_CARD BACKS"));
+//        map["button"] = Value("img");
+//        map["value"] = Value(0);
+//        map["img"] = Value(DataManager::getInstance()->getCardbackFile());
+//        string cardback = DataManager::getInstance()->getCardbackFile();
+//        CCLOG("cardback = %s", cardback.c_str());
+//        dataArray.push_back(Value(map));
+//    }
+//    {
+//        ValueMap map;
+//        map["title"] = Value(LocalizedString("TID_UI_BACKGROUND"));
+//        map["button"] = Value("img");
+//        map["value"] = Value(0);
+//        map["img"] = Value(DataManager::getInstance()->getPreviewThemeFile());
+//        dataArray.push_back(Value(map));
+//    }
     {
         ValueMap map;
-        map["title"] = Value(LocalizedString("TID_UI_CARD FACES"));
-        map["button"] = Value("img");
-        map["value"] = Value(0);
-        sprintf(str, "shared/cardstyle_%d.png", DataManager::getInstance()->getFaceID());
-        map["img"] = Value(str);
-        dataArray.push_back(Value(map));
-    }
-    {
-        ValueMap map;
-        map["title"] = Value(LocalizedString("TID_UI_CARD BACKS"));
-        map["button"] = Value("img");
-        map["value"] = Value(0);
-        map["img"] = Value(DataManager::getInstance()->getCardbackFile());
-        dataArray.push_back(Value(map));
-    }
-    {
-        ValueMap map;
-        map["title"] = Value(LocalizedString("TID_UI_BACKGROUND"));
-        map["button"] = Value("img");
-        map["value"] = Value(0);
-        map["img"] = Value(DataManager::getInstance()->getPreviewThemeFile());
-        dataArray.push_back(Value(map));
-    }
-    {
-        ValueMap map;
+        map["name"] = Value(NAME_LANGUAGE);
         map["title"] = Value(LocalizedString("TID_UI_LANGUAGE"));
         map["button"] = Value("img");
         map["value"] = Value(0);
@@ -872,6 +1468,7 @@ void Layer_Setting::loadData(){
     
     {
         ValueMap map;
+        map["name"] = Value(NAME_AUTO_HINT);
         map["title"] = Value(LocalizedString("TID_UI_AUTO HINTS"));
         map["button"] = Value("sw");
         map["value"] = Value(dataMgr->getAutoTip());
@@ -881,6 +1478,7 @@ void Layer_Setting::loadData(){
     //TID_UI_RULESRULES
     {
         ValueMap map;
+        map["name"] = Value(NAME_HOW_TO_PLAY);
         map["title"] = Value(LocalizedString("TID_UI_HOW TO PLAY"));
         map["button"] = Value("none");
         map["value"] = Value(0);
@@ -898,9 +1496,9 @@ void Layer_Setting::loadData(){
         auto dic = dataArray[idx].asValueMap();
         dic["value"] = Value((int)cell->isSwitchSelected());
         bool v = cell->isSwitchSelected();
-        TagSettings tagSettings = *instance->getSettings();
         
-        if (idx == 0) {
+        string name = dic["name"].asString();
+        if (name == NAME_SOUND) {
             dataMgr->setSoundOn(v);
             
             if(!v){
@@ -911,9 +1509,9 @@ void Layer_Setting::loadData(){
                 Audio::getInstance()->resumeMusic();
             }
             
-        } else if (idx == 1) {
-            tagSettings.m_chou3card = (ENUM_CHOU3CARD)v;
-        } else if (idx == 2) {
+        } else if (name == NAME_DRAW3) {
+            dataMgr->setChow3Card(v);
+        } else if (name == NAME_VEGAS_MODE) {
             instance->setVegasOn(v);
             
             auto sub = static_cast<Cell_Setting *>(_listView->getItem(idx+1));
@@ -950,16 +1548,15 @@ void Layer_Setting::loadData(){
                     }
                 }
             }
-        } else if (idx == 3) {
+        } else if (name == NAME_VEGAS_ADD) {
             instance->setVegasScoreAdd(v);
-        } else if (idx == 4) {
-            tagSettings.m_time_score = (ENUM_TIME_SCORE)v;
-        } else if (idx == 5) {
-            tagSettings.m_right_hand = (ENUM_RIGHT_HAND)v;
-        } else if (idx == 10) {
+        } else if (name == NAME_TIMER) {
+            instance->setShowMatchInfo(v);
+        } else if (name == NAME_LEFT_HAND) {
+            instance->setUseRightHand(v);
+        } else if (name == NAME_AUTO_HINT) {
             instance->setAutoTip(v);
         }
-        instance->saveSettingsData(tagSettings);
         
     };
     
@@ -985,9 +1582,9 @@ void Layer_Setting::loadData(){
             cell->getArrow()->setScale(sc);
             cell->setSwitchVisible(false);
             cell->getArrow()->setFlippedX(false);
-            if (i == 6) {
-                cell->getArrow()->setPositionX(cell->getArrow()->getPositionX() - 70);
-            }
+//            if (i == 6) {
+//                cell->getArrow()->setPositionX(cell->getArrow()->getPositionX() - 70);
+//            }
             
         } else if (btn == "none") {
             
@@ -998,11 +1595,11 @@ void Layer_Setting::loadData(){
             onSwitchFunc(cell, true);
         });
         bool flag = false;
-        if (i == 7 && UserDefault::getInstance()->getBoolForKey("KL_CUSTOM_CARDBACK_CLICK") == false) {
-            flag = true;
-        } else if (i == 8 && UserDefault::getInstance()->getBoolForKey("KL_CUSTOM_THEME_CLICK") == false) {
-            flag = true;
-        }
+//        if (i == 7 && UserDefault::getInstance()->getBoolForKey("KL_CUSTOM_CARDBACK_CLICK") == false) {
+//            flag = true;
+//        } else if (i == 8 && UserDefault::getInstance()->getBoolForKey("KL_CUSTOM_THEME_CLICK") == false) {
+//            flag = true;
+//        }
         cell->setBadgeEnabled(flag);
     }
 }
@@ -1108,27 +1705,29 @@ bool Layer_Setting::init(){
     
         if (type == ListView::EventType::ON_SELECTED_ITEM_END) {
             auto idx = listView->getCurSelectedIndex();
-            if (idx == 6) {
-                auto la = Layer_Faces::create();
-                auto sc = Scene::create();
-                sc->addChild(la);
-                Director::getInstance()->pushScene(sc);
-            } else if (idx == 7) {
-                auto la = Layer_CardBack::create();
-                auto sc = Scene::create();
-                sc->addChild(la);
-                Director::getInstance()->pushScene(sc);
-            } else if (idx == 8) {
-                auto la = Layer_Themes::create();
-                auto sc = Scene::create();
-                sc->addChild(la);
-                Director::getInstance()->pushScene(sc);
-            } else if (idx == 9){
+            string name = dataArray[idx].asValueMap()["name"].asString();
+//            if (idx == 6) {
+//                auto la = Layer_Faces::create();
+//                auto sc = Scene::create();
+//                sc->addChild(la);
+//                Director::getInstance()->pushScene(sc);
+//            } else if (idx == 7) {
+//                auto la = Layer_CardBack::create();
+//                auto sc = Scene::create();
+//                sc->addChild(la);
+//                Director::getInstance()->pushScene(sc);
+//            } else if (idx == 8) {
+//                auto la = Layer_Themes::create();
+//                auto sc = Scene::create();
+//                sc->addChild(la);
+//                Director::getInstance()->pushScene(sc);
+//            } else
+            if (name == NAME_LANGUAGE){
                 //localization
                 auto la = Layer_Language::create();
                 this->addChild(la);
                 
-            } else if (idx == dataArray.size()-1) {
+            } else if (name == NAME_HOW_TO_PLAY) {
                 auto la = Layer_HowToPlay::create();
                 auto sc = Scene::create();
                 sc->addChild(la);

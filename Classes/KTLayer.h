@@ -35,7 +35,6 @@
 #include "KLUtils.hpp"
 #include "md5.h"
 
-
 using namespace cocos2d::network;
 
 using namespace NSGlobal;

@@ -6,8 +6,8 @@
 //
 //
 
-#import "KLBaseController.h"
-
-@interface KLSettingController : KLBaseController
-
-@end
+//#import "KLBaseController.h"
+//
+//@interface KLSettingController : KLBaseController
+//
+//@end

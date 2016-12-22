@@ -68,7 +68,7 @@
     NSString *pPath = [[KLManager sharedManager]getThemeCachePath:YES];
     NSString *lPath = [[KLManager sharedManager]getThemeCachePath:NO];
     NSString *sPath = [[KLManager sharedManager]getThemePreviewCachePath];
-    UIImage *preview = [UIImage imageWithImage:self.imgView1.image scaledToSize:CGSizeMake(88, 131)];
+    UIImage *preview = [UIImage imageWithImage:self.imgView1.image scaledToSize:CGSizeMake(78, 124)];
     if ([UIImageJPEGRepresentation(self.imgView1.image,1) writeToFile:pPath atomically:YES] && [UIImageJPEGRepresentation(self.imgView2.image,1) writeToFile:lPath atomically:YES] && [UIImagePNGRepresentation(preview) writeToFile:sPath atomically:YES]){
         [[KLManager sharedManager] onThemeFileChanged];
         [self dismissViewControllerAnimated:YES completion:nil];

@@ -13,6 +13,15 @@
 using namespace std;
 USING_NS_CC;
 
+#define KT_SYNTHESIZE_UD_BOOL(keyName, funName, defaultValue)\
+public: virtual bool is##funName(void) const { return UserDefault::getInstance()->getBoolForKey(keyName, defaultValue); }\
+public: virtual void set##funName(bool var){ UserDefault::getInstance()->setBoolForKey(keyName, var);UserDefault::getInstance()->flush(); }
+
+#define KT_SYNTHESIZE_UD_INT(keyName, funName, defaultValue)\
+public: virtual int get##funName(void) const { return UserDefault::getInstance()->getIntegerForKey(keyName, defaultValue); }\
+public: virtual void set##funName(int var){ UserDefault::getInstance()->setIntegerForKey(keyName, var);UserDefault::getInstance()->flush(); }
+
+
 #define screenSize Director::getInstance()->getWinSize()
 
 #define isLandscape ((screenSize.width>screenSize.height)?1:0)
@@ -50,18 +59,18 @@ USING_NS_CC;
 
 
 
-#define KT_SYNTHESIZE_USERDEFAULT_INT(varType, varName, funName)    \
-private: varType varName; \
-public: virtual varType get##funName(void) const { return varName; } \
-public: virtual void set##funName(varType var)   \
-{ \
-if (varName != var) \
-{ \
-CC_SAFE_RETAIN(var); \
-CC_SAFE_RELEASE(varName); \
-varName = var; \
-} \
-}
+//#define KT_SYNTHESIZE_USERDEFAULT_INT(varType, varName, funName)    \
+//private: varType varName; \
+//public: virtual varType get##funName(void) const { return varName; } \
+//public: virtual void set##funName(varType var)   \
+//{ \
+//if (varName != var) \
+//{ \
+//CC_SAFE_RETAIN(var); \
+//CC_SAFE_RELEASE(varName); \
+//varName = var; \
+//} \
+//}
 
 
 

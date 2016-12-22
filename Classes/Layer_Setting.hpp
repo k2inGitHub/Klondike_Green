@@ -12,6 +12,7 @@
 #include "KTPauseLayer.h"
 
 
+
 class Layer_HowToPlay : public KTPauseLayer{
     
     Sprite *_bg;
@@ -45,6 +46,31 @@ public:
     virtual void updateLayout()override;
 };
 
+
+class Layer_CustomTheme : public KTPauseLayer{
+    
+protected:
+    ListView *_listView;
+    Sprite *_bg;
+    RenderTexture *_rt;
+public:
+    
+//    CC_SYNTHESIZE_RETAIN(Node *, _clipContainer, ClipContainer);
+    
+    ~Layer_CustomTheme();
+    virtual void updateLayout()override;
+    virtual bool init()override;
+    virtual Layout *cellForDisplay();
+    virtual void reloadData();
+    CREATE_FUNC(Layer_CustomTheme);
+    
+    void updateBadge(Ref *sender);
+    void onCardbackFileCanceled(Ref *sender);
+    void onCardbackFileChanged(Ref *sender);
+    void onThemeFileChanged(Ref *sender);
+    void onThemeFileCanceled(Ref *sender);
+};
+
 class Layer_Select : public KTPauseLayer{
     
 protected:
@@ -59,36 +85,41 @@ public:
     virtual Layout *cellForDisplay();
     virtual void reloadData();
     virtual void onConfirm();
+    virtual void onCancel();
 };
 
-class ThemeItem : public Ref{
-    
+class Layer_ThemeSet : public Layer_Select {
 public:
-    
-    CC_SYNTHESIZE_PASS_BY_REF(string, _name, Name);
-    CC_SYNTHESIZE_PASS_BY_REF(string, _bgFile, BgFile);
-    CC_SYNTHESIZE_PASS_BY_REF(string, _previewFile, PreviewFile);
-    
-    //virtual bool init();
+    bool _inited;
+    int _lastIdx;
+    int _idx;
+    virtual Layout *cellForDisplay()override;
+    virtual void reloadData()override;
+    virtual void onConfirm()override;
+    virtual bool init()override;
+    CREATE_FUNC(Layer_ThemeSet);
+    ~Layer_ThemeSet();
+    virtual void updateLayout()override;
 };
 
+/*
 class Layer_Themes : public Layer_Select {
     
 public:
     
     int _idx;
-//    vector<vector<string>> dataArray;
-    
     virtual Layout *cellForDisplay()override;
     virtual void reloadData()override;
     virtual void onConfirm() override;
+    virtual void onCancel() override;
     virtual bool init()override;
     CREATE_FUNC(Layer_Themes);
+    ~Layer_Themes();
     
     void onThemeFileChanged(Ref *sender);
     void onThemeFileCanceled(Ref *sender);
 
-    ~Layer_Themes();
+    
 };
 
 class Layer_Faces : public Layer_Select {
@@ -96,7 +127,7 @@ class Layer_Faces : public Layer_Select {
 public:
     
     int _idx;
-    vector<string> dataArray;
+//    vector<string> dataArray;
     
     virtual Layout *cellForDisplay()override;
     virtual void reloadData()override;
@@ -122,10 +153,13 @@ public:
     void onCardbackFileCanceled(Ref *sender);
     void onCardbackFileChanged(Ref *sender);
 };
-
+*/
 
 class Layer_Setting : public KTPauseLayer {
 
+    
+    
+    
     Button *_sharedBtn;
     Text *_titleLabel;
     Button *_closeBtn;

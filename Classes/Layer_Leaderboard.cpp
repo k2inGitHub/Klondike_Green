@@ -342,7 +342,7 @@ bool Layer_Leaderboard::init(time_t stamp){
     _stamp = stamp;
     
     auto size = VisibleRect::getVisibleRect().size;
-    auto sprite = Sprite::create("shared/theme/1.jpg");
+    auto sprite = Sprite::create(BG_FILENAME);
     sprite->setPosition(VisibleRect::center());
     this->addChild(sprite, -100);
     _bg = sprite;
@@ -404,7 +404,7 @@ bool Layer_Leaderboard::init(time_t stamp){
                 btnLost->setOpacity(255);
                 btnLost->setColor(Color3B(KL_GREEN));
                 btnLost->setTitleColor(Color3B::WHITE);
-                btnLost->getTitleRenderer()->enableShadow(Color4B::GRAY);
+//                btnLost->getTitleRenderer()->enableShadow(Color4B::GRAY);
                 btnLost->getTitleRenderer()->setPosition(Vec2(Size(170, 52.5)/2));
             }
             if (btnGet == _tabButtons.front() || btnGet == _tabButtons.back())
@@ -417,8 +417,8 @@ bool Layer_Leaderboard::init(time_t stamp){
             btnGet->setContentSize(Size(170, 60));
             btnGet->setOpacity(255);
             btnGet->setColor(Color3B::WHITE);
-            btnGet->setTitleColor(Color3B(KL_BROWN));
-            btnGet->getTitleRenderer()->enableShadow(Color4B::WHITE);
+            btnGet->setTitleColor(Color3B::WHITE);
+//            btnGet->getTitleRenderer()->enableShadow(Color4B::WHITE);
             btnGet->getTitleRenderer()->setPosition(Vec2(Size(170, 60)/2));
             _tabIdx = (int)_tabButtons.getIndex(btnGet);
             this->loadData(_tabIdx);

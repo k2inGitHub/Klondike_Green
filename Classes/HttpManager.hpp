@@ -33,14 +33,18 @@ class HttpManager : public Ref{
     
     
 public:
+    CC_SYNTHESIZE_PASS_BY_REF(std::string, _originUrl, OriginUrl);
+    
     HttpRequestSuccessCallback onSuccess;
     HttpRequestFailureCallback onFailure;
     ~HttpManager();
+    HttpManager();
     virtual bool init();
     
     static HttpManager* create();
     
     void sendGET(std::string url, std::unordered_map<std::string, std::string> parameters, HttpRequestSuccessCallback onSuccess, HttpRequestFailureCallback onFailure);
+    
 };
 
 #endif /* HttpManager_hpp */

@@ -30,6 +30,8 @@ class Layer_Daily : public KTPauseLayer {
     
     Vector<Node *> _labels;
     
+//    Node *_red1;
+    
     Node *_white1;
     
     Node *_white2;

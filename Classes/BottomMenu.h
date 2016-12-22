@@ -16,7 +16,12 @@ class BottomMenu : public cocos2d::LayerColor, public KTPauseLayerDelegate {
     
     Sprite *_bg;
     
+    bool _isHide;
 public:
+    
+    void hide(bool isAnimate);
+    
+    void show(bool isAnimate);
     
     void onScreenSizeChanged(Ref *sender);
     
@@ -51,7 +56,13 @@ public:
     
     void setItemBadge(int idx, bool value);
     
+    void setConerItemBadge(int idx, bool value);
+    
+    void setConerItemVisible(int idx, bool value);
+    
     Vector<MenuItem *>items;
+    
+    Vector<Button *>cornerBtns;
     
     BottomMenu();
     

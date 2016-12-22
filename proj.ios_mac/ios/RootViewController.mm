@@ -36,6 +36,7 @@
 #import "UIImage+KT.h"
 #import "KLEditThemeController.h"
 #import "UIImagePickerController+KL.h"
+#import "AppController.h"
 
 using namespace NSDataManage;
 

@@ -12,6 +12,7 @@
 #include "cocos2d.h"
 using namespace cocos2d;
 
+const Color4B KL_BLUE = Color4B(0, 161, 253, 255);
 const Color4B KL_GREEN = Color4B(110,200,30,255);
 const Color4B KL_BROWN = Color4B(190,95,5,255);
 const Color4B KL_YELLOW = Color4B(242,204,59,255);

@@ -161,7 +161,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
     
     FileUtils::getInstance()->addSearchPath("ui");
-    FileUtils::getInstance()->addSearchPath("fonts");
     FileUtils::getInstance()->setPopupNotify(false);
     
     auto str = FileUtils::getInstance()->getWritablePath();
@@ -181,26 +180,36 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto updateKey = thisVersion + "_hasLauched";
     
     if (!UserDefault::getInstance()->getBoolForKey(updateKey.c_str())) {
+        auto mgr = DataManager::getInstance();
+        
         //产品更新后
         //重置好评弹出
         KLRateLayer::reset();
         
         //!!!
         //主题 牌背 id纠错
-        int faceid = DataManager::getInstance()->getFaceID();
-        if (faceid>4) {
+        //将id改为key 主键由int变为key
+        
+        int faceid = mgr->getFaceID();
+        if (faceid > mgr->getFaces().size()) {
             faceid = 1;
         }
-        DataManager::getInstance()->setFaceID(faceid);
+//        mgr->setFaceID(faceid);
+        mgr->setCustomSelectFaceName(mgr->getFaces().at(faceid-1)->getName());
         
-        int cbid = DataManager::getInstance()->getCardbackID();
-        cbid = clampf(cbid, 2, kCardbackCount);
-        DataManager::getInstance()->setCardbackID(cbid);
         
-        auto thid = DataManager::getInstance()->getThemeID();
-        thid = clampf(thid, 2, kThemeCount);
-        DataManager::getInstance()->setThemeID(thid);
+        int cbid = mgr->getCardbackID();
+        cbid = clampf(cbid, 2, mgr->getCardbacks().size());
+//        mgr->setCardbackID(cbid);
+        mgr->setCustomSelectCardbackName(mgr->getCardbacks().at(cbid-1)->getName());
 
+        auto thid = mgr->getThemeID();
+        thid = clampf(thid, 2, mgr->getThemes().size());
+//        mgr->setThemeID(thid);
+        mgr->setCustomSelectThemeName(mgr->getThemes().at(thid-1)->getName());
+
+        //KT SYN
+        mgr->setHappyChrismtasShowed(false);
         
         UserDefault::getInstance()->setBoolForKey(updateKey.c_str(), true);
         UserDefault::getInstance()->flush();

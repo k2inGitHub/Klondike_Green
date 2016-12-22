@@ -86,6 +86,7 @@ void Localization::loadData(){
     }
 }
 
+//KT SYN2
 std::string Localization::get(std::string key){
     
     if (key.empty()) {
@@ -102,13 +103,20 @@ std::string Localization::get(std::string key){
         if (memitr != itr->MemberEnd()) {
             std::string id = memitr->value.GetString();
             if (id == key) {
-                const char *lan = getLanguage().c_str();
-                rapidjson::Value::ConstMemberIterator findItr = itr->FindMember(lan);
+                std::string lan = getLanguage();
+                rapidjson::Value::ConstMemberIterator findItr = itr->FindMember(lan.c_str());
                 if (findItr != itr->MemberEnd()) {
                     std::string ret = findItr->value.GetString();
                     return ret;
                 } else {
-                    CCLOG("key = %s language = %s 未配置", id.c_str(), lan);
+                    rapidjson::Value::ConstMemberIterator findItr = itr->FindMember("en");
+                    std::string ret = findItr->value.GetString();
+                    if (ret.empty()) {
+                        CCLOG("key = %s language = %s 未配置", id.c_str(), lan.c_str());
+                    } else {
+                        return ret;
+                    }
+
                 }
             }
         }

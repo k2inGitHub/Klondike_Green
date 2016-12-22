@@ -183,8 +183,8 @@ public class AppActivity extends Cocos2dxActivity {
         }
     }
 
-    public static void showMoreTheme(){
-        String devName = "HiColor";
+    public static void showToSetupThemeAppPage(String devName){
+        Log.v("fuck", devName);
         try {
             instance.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pub:"+devName)));
         } catch (android.content.ActivityNotFoundException anfe) {
@@ -201,12 +201,14 @@ public class AppActivity extends Cocos2dxActivity {
             Log.v("fuck", "intentName = " + i.getStringExtra("name"));
             if ("themeSetup".equals(i.getStringExtra("name"))){
                 String themeName = i.getStringExtra("themeName");
+                Log.v("fuck", "extra themeName = " + themeName);
 
                 SQLiteDatabase database = mHelper.getWritableDatabase();
                 Cursor cursor = database.query("theme", new String[]{"id", "name", "isNew"}, "name=?", new String[]{themeName}, null, null, null);
                 if (cursor.moveToFirst()){
 
                     String isNew = cursor.getString(cursor.getColumnIndex("isNew"));
+                    Log.v("fuck", "isNew = " + isNew);
                     if (isNew.equals("1")){
 
                         Log.v("fuck", "themeName = " + themeName);
@@ -246,6 +248,7 @@ public class AppActivity extends Cocos2dxActivity {
 
     public static native  void onThemeSetup(String themeName);
 
+    public static native void copyThemeFolder(String themeName);
 
     //name : theme_**** theme_galaxy
     void query(String name, final boolean isStart){
@@ -271,63 +274,28 @@ public class AppActivity extends Cocos2dxActivity {
 //
 //        }
 //        cursor.close();
+
         final String themeName = name;
 
-        Bitmap sourceImg = null;
-        Bitmap previewImg = null;
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/themeFolder/" + themeName + "_bg.jpg";
-        String path2 = Environment.getExternalStorageDirectory().getAbsolutePath() + "/themeFolder/" + themeName + "_preview.png";
-
-        File file = new File(path);
-        File file2 = new File(path2);
-        Log.v("fuck", "path = " + file.getPath());
-        Log.v("fuck", "exist = " + file.exists());
-
-        Log.v("fuck", "path2 = " + file2.getPath());
-        Log.v("fuck", "exist2 = " + file2.exists());
-//        Uri uri = Uri.fromFile(file);
-//        Uri uri2 = Uri.fromFile(file2);
-
-//        String path = Environment.getExternalStorageDirectory()+"/themeFolder/" + themeName + "_bg.jpg";
-//        String path2 = Environment.getExternalStorageDirectory()+"/themeFolder/" + themeName + "_preview.png";
-
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        sourceImg = BitmapFactory.decodeFile(path, options);
-        previewImg = BitmapFactory.decodeFile(path2, options);
-        Log.v("fuck", "sourceImg = " + sourceImg);
-        Log.v("fuck", "previewImg = " + previewImg);
-//        try
-//        {
-//
-//            sourceImg = MediaStore.Images.Media.getBitmap(this.getContentResolver() , uri);
-//            previewImg = MediaStore.Images.Media.getBitmap(this.getContentResolver() , uri2);
-//            Log.v("fuck", "sourceImg = " + sourceImg);
-//            Log.v("fuck", "previewImg = " + previewImg);
-//        }
-//        catch (Exception e)
-//        {
-//            //handle exception
-//            e.printStackTrace();
-//        }
-        if (sourceImg != null && previewImg != null){
-
-            KTUtils.saveBitmap(themeName + "_bg.jpg", sourceImg, Bitmap.CompressFormat.PNG);
-            KTUtils.saveBitmap(themeName + "_preview.png", previewImg, Bitmap.CompressFormat.PNG);
-            AppActivity mCocos2dxActivity = (AppActivity) Cocos2dxActivity.getContext();
-            if (isStart){
-                Log.v("fuck", "setString");
-                Cocos2dxHelper.setStringForKey("KL_NeedSetupTheme", themeName);
-            } else {
-                Log.v("fuck", "onThemeSetup");
-                mCocos2dxActivity.runOnGLThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        onThemeSetup(themeName);
-                    }
-                });
-            };
-        }
+        AppActivity mCocos2dxActivity = (AppActivity) Cocos2dxActivity.getContext();
+        mCocos2dxActivity.runOnGLThread(new Runnable() {
+            @Override
+            public void run() {
+                copyThemeFolder(themeName);
+            }
+        });
+        if (isStart){
+            Log.v("fuck", "setString");
+            Cocos2dxHelper.setStringForKey("KL_NeedSetupTheme", themeName);
+        } else {
+            Log.v("fuck", "onThemeSetup");
+            mCocos2dxActivity.runOnGLThread(new Runnable() {
+                @Override
+                public void run() {
+                    onThemeSetup(themeName);
+                }
+            });
+        };
 
     }
 
@@ -658,6 +626,15 @@ public class AppActivity extends Cocos2dxActivity {
     static boolean isStarted = false;
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.v("fuck2", "onNewIntent");
+        setIntent(intent);
+
+
+    }
+
+    @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -722,11 +699,21 @@ public class AppActivity extends Cocos2dxActivity {
 
     }
 
+    //KT SYN2
     @Override
     protected void onResume() {
         super.onResume();
         Log.i("fuck", "onResume");
-        checkThemeSetup(false);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                checkThemeSetup(false);
+            }
+        }, 1000 / 24);
+
+
     }
 
     @Override

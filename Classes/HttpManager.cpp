@@ -22,6 +22,10 @@ HttpManager::~HttpManager(){
     CCLOG("~HttpManager");
 }
 
+HttpManager::HttpManager(){
+
+}
+
 bool HttpManager::init(){
 
     //ref ++
@@ -62,6 +66,7 @@ void HttpManager::sendGET(std::string url, std::unordered_map<std::string, std::
         
         first = false;
     }
+    setOriginUrl(originUrl);
     CCLOG("origin url = %s", originUrl.c_str());
     CCLOG("url = %s", url.c_str());
     HttpRequest* request = new (std::nothrow) HttpRequest();
@@ -105,5 +110,4 @@ void HttpManager::sendGET(std::string url, std::unordered_map<std::string, std::
         _mangers.eraseObject(this);
     });
     HttpClient::getInstance()->send(request);
-    request->release();
 }

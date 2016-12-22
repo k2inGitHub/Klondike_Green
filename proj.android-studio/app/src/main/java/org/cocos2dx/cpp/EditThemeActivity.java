@@ -18,7 +18,7 @@ import android.content.*;
 import android.widget.TextView;
 
 import org.cocos2dx.lib.*;
-import com.skyeye.solitaire.*;
+import com.skyeye.solitaire1.*;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.*;
@@ -180,20 +180,22 @@ public class EditThemeActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Bitmap bitmap = ((BitmapDrawable)EditThemeActivity.this.iv1.getDrawable()).getBitmap();
-                KTUtils.saveBitmap(PortraitFile, bitmap, Bitmap.CompressFormat.JPEG);
+                KTUtils.saveBitmap(PortraitFile, bitmap, Bitmap.CompressFormat.PNG);
 
                 Bitmap bitmap2 = ((BitmapDrawable)EditThemeActivity.this.iv2.getDrawable()).getBitmap();
-                KTUtils.saveBitmap(LandscapeFile, bitmap2, Bitmap.CompressFormat.JPEG);
+                KTUtils.saveBitmap(LandscapeFile, bitmap2, Bitmap.CompressFormat.PNG);
 
-                Bitmap preview = Bitmap.createScaledBitmap(bitmap,88,131,true);
+                Bitmap preview = Bitmap.createScaledBitmap(bitmap,78,124,true);
                 KTUtils.saveBitmap(PreviewFile, preview, Bitmap.CompressFormat.PNG);
+
+                final Cocos2dxActivity mCocos2dxActivity = (Cocos2dxActivity) Cocos2dxActivity.getContext();
 
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         //Do something after 100ms
-                        Cocos2dxActivity mCocos2dxActivity = (Cocos2dxActivity) Cocos2dxActivity.getContext();
+                        final Cocos2dxActivity mCocos2dxActivity = (Cocos2dxActivity) Cocos2dxActivity.getContext();
 
                         mCocos2dxActivity.runOnGLThread(new Runnable() {
                             @Override
@@ -202,7 +204,7 @@ public class EditThemeActivity extends Activity {
                             }
                         });
                     }
-                }, 1000 / 24);
+                }, 1000/24);
 
                 EditThemeActivity.this.finish();
             }

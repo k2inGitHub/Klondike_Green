@@ -352,6 +352,7 @@
   jni/../../../Classes/md5.h jni/../../../Classes/Cell_HighScore.hpp \
   jni/../../../Classes/Cell_Setting.hpp \
   jni/../../../Classes/Button_Highlight.hpp \
+  jni/../../../Classes/Item_Setting.hpp \
   jni/../../../Classes/HighScoreManager.hpp \
   jni/../../../Classes/HighScoreModel.hpp \
   jni/../../../Classes/KTDate.hpp
@@ -1071,6 +1072,8 @@ jni/../../../Classes/Cell_HighScore.hpp:
 jni/../../../Classes/Cell_Setting.hpp:
 
 jni/../../../Classes/Button_Highlight.hpp:
+
+jni/../../../Classes/Item_Setting.hpp:
 
 jni/../../../Classes/HighScoreManager.hpp:
 

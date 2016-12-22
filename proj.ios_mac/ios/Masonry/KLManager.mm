@@ -51,12 +51,40 @@ using namespace NSGlobal;
     }
 //    self.imageView.image = [UIImage imageWithData:theme.bg];
     
-    NSString *dir = [NSString stringWithUTF8String:FileUtils::getInstance()->getWritablePath().c_str()];
-    NSString *bgFile = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_bg.jpg", themeName]];
-    NSString *previewFile = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_preview.png", themeName]];
+    auto fu = FileUtils::getInstance();
     
+    std::string themeDir = FileUtils::getInstance()->getWritablePath() + themeName.UTF8String + "/";
+    fu->createDirectory(themeDir);
+    NSString *dir = [NSString stringWithUTF8String:themeDir.c_str()];
+    NSString *bgFile = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"theme_bg.jpg"]];
+    NSString *previewFile = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"theme_preview.png"]];
+    NSString *cardbackFile = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"cardback.png"]];
+    NSString *themeSetFile = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"theme_set_preview.png"]];
+    NSString *dataFile = [dir stringByAppendingPathComponent:[NSString stringWithFormat:@"data.plist"]];
+    NSLog(@"cardbackFile = %@", cardbackFile);
+
     [theme.bg writeToFile:bgFile atomically:YES];
     [theme.preview writeToFile:previewFile atomically:YES];
+    if (theme.cardback) {
+        [theme.cardback writeToFile:cardbackFile atomically:YES];
+    }
+    [theme.themeSetPreview writeToFile:themeSetFile atomically:YES];
+    [theme.itemDict writeToFile:dataFile atomically:YES];
+    
+    if (theme.faces.count != 0) {
+        std::string facesDir = themeDir + "faces/";
+        fu->createDirectory(facesDir);
+        for (int i = 0; i < 4; i++) {
+            std::string facesSubDir = StringUtils::format("%s%d/", facesDir.c_str(), i);
+            fu->createDirectory(facesSubDir);
+            NSMutableArray *subArr = theme.faces[i];
+            for (int j = 0; j < 13; j++) {
+                NSData *data = subArr[j];
+                std::string file = StringUtils::format("%s%d.png",facesSubDir.c_str(), j+1);
+                [data writeToFile:[NSString stringWithUTF8String:file.c_str()] atomically:YES];
+            }
+        }
+    }
     
     if (!self.isStart) {
         UserDefault::getInstance()->setStringForKey("KL_NeedSetupTheme", themeName.UTF8String);

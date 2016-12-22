@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		161C35DA1D9E0F260078FAB2 /* InterpFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 161C35D81D9E0F260078FAB2 /* InterpFloat.cpp */; };
-		16233CD91D59BCDE0015CD8C /* bottomMenu in Resources */ = {isa = PBXBuildFile; fileRef = 16233CD31D59BCDE0015CD8C /* bottomMenu */; };
-		16233CDA1D59BCDE0015CD8C /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 16233CD41D59BCDE0015CD8C /* fonts */; };
 		16233CDB1D59BCDE0015CD8C /* localization.json in Resources */ = {isa = PBXBuildFile; fileRef = 16233CD51D59BCDE0015CD8C /* localization.json */; };
 		16233CDC1D59BCDE0015CD8C /* Music in Resources */ = {isa = PBXBuildFile; fileRef = 16233CD61D59BCDE0015CD8C /* Music */; };
 		16233CDD1D59BCDE0015CD8C /* shared in Resources */ = {isa = PBXBuildFile; fileRef = 16233CD71D59BCDE0015CD8C /* shared */; };
@@ -182,6 +180,8 @@
 		16233EE41D59C9900015CD8C /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16233EE31D59C9900015CD8C /* AddressBook.framework */; };
 		16233EE61D59CB700015CD8C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 16233EE51D59CB700015CD8C /* GoogleService-Info.plist */; };
 		16233EE91D59D05C0015CD8C /* Layer_Leaderboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 16233EE71D59D05C0015CD8C /* Layer_Leaderboard.cpp */; };
+		163081C01DED6435003C4E28 /* dataSource.plist in Resources */ = {isa = PBXBuildFile; fileRef = 163081BF1DED6435003C4E28 /* dataSource.plist */; };
+		163081C41DEEDC15003C4E28 /* Item_Setting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 163081C21DEEDC15003C4E28 /* Item_Setting.cpp */; };
 		1636A9BF1DE688AF00125379 /* MJExtensionConst.m in Sources */ = {isa = PBXBuildFile; fileRef = 1636A9AC1DE688AF00125379 /* MJExtensionConst.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1636A9C01DE688AF00125379 /* MJFoundation.m in Sources */ = {isa = PBXBuildFile; fileRef = 1636A9AE1DE688AF00125379 /* MJFoundation.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1636A9C11DE688AF00125379 /* MJProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 1636A9B01DE688AF00125379 /* MJProperty.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -193,6 +193,8 @@
 		1636A9C71DE688AF00125379 /* NSObject+MJProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 1636A9BC1DE688AF00125379 /* NSObject+MJProperty.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1636A9C81DE688AF00125379 /* NSString+MJExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1636A9BE1DE688AF00125379 /* NSString+MJExtension.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1636A9CB1DE6940C00125379 /* KLThemeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1636A9CA1DE6940C00125379 /* KLThemeModel.m */; };
+		163D3E921E0B8EBD0044FE14 /* iOS in Resources */ = {isa = PBXBuildFile; fileRef = 163D3E911E0B8EBD0044FE14 /* iOS */; };
+		1645F76D1E0A5B760012D0F2 /* NetworkingUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1645F76B1E0A5B760012D0F2 /* NetworkingUtils.cpp */; };
 		168C93001DC6EB4800843780 /* KLEditThemeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 168C92FF1DC6EB4800843780 /* KLEditThemeController.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		168C93421DC6F85800843780 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 168C93281DC6F85800843780 /* Info.plist */; };
 		168C93431DC6F85800843780 /* MASCompositeConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 168C932A1DC6F85800843780 /* MASCompositeConstraint.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -300,8 +302,6 @@
 /* Begin PBXFileReference section */
 		161C35D81D9E0F260078FAB2 /* InterpFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InterpFloat.cpp; sourceTree = "<group>"; };
 		161C35D91D9E0F260078FAB2 /* InterpFloat.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = InterpFloat.hpp; sourceTree = "<group>"; };
-		16233CD31D59BCDE0015CD8C /* bottomMenu */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bottomMenu; sourceTree = "<group>"; };
-		16233CD41D59BCDE0015CD8C /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		16233CD51D59BCDE0015CD8C /* localization.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = localization.json; sourceTree = "<group>"; };
 		16233CD61D59BCDE0015CD8C /* Music */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Music; sourceTree = "<group>"; };
 		16233CD71D59BCDE0015CD8C /* shared */ = {isa = PBXFileReference; lastKnownFileType = folder; path = shared; sourceTree = "<group>"; };
@@ -594,6 +594,9 @@
 		16233EE51D59CB700015CD8C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		16233EE71D59D05C0015CD8C /* Layer_Leaderboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Layer_Leaderboard.cpp; sourceTree = "<group>"; };
 		16233EE81D59D05C0015CD8C /* Layer_Leaderboard.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Layer_Leaderboard.hpp; sourceTree = "<group>"; };
+		163081BF1DED6435003C4E28 /* dataSource.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = dataSource.plist; sourceTree = "<group>"; };
+		163081C21DEEDC15003C4E28 /* Item_Setting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Item_Setting.cpp; sourceTree = "<group>"; };
+		163081C31DEEDC15003C4E28 /* Item_Setting.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Item_Setting.hpp; sourceTree = "<group>"; };
 		1636A9AA1DE688AF00125379 /* MJExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJExtension.h; sourceTree = "<group>"; };
 		1636A9AB1DE688AF00125379 /* MJExtensionConst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJExtensionConst.h; sourceTree = "<group>"; };
 		1636A9AC1DE688AF00125379 /* MJExtensionConst.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJExtensionConst.m; sourceTree = "<group>"; };
@@ -618,6 +621,9 @@
 		1636A9C91DE6940C00125379 /* KLThemeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KLThemeModel.h; path = ios/KLThemeModel.h; sourceTree = SOURCE_ROOT; };
 		1636A9CA1DE6940C00125379 /* KLThemeModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KLThemeModel.m; path = ios/KLThemeModel.m; sourceTree = SOURCE_ROOT; };
 		1636A9CC1DE6959E00125379 /* KLConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = KLConfig.h; path = ios/KLConfig.h; sourceTree = SOURCE_ROOT; };
+		163D3E911E0B8EBD0044FE14 /* iOS */ = {isa = PBXFileReference; lastKnownFileType = folder; path = iOS; sourceTree = "<group>"; };
+		1645F76B1E0A5B760012D0F2 /* NetworkingUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkingUtils.cpp; sourceTree = "<group>"; };
+		1645F76C1E0A5B760012D0F2 /* NetworkingUtils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NetworkingUtils.hpp; sourceTree = "<group>"; };
 		167F4A961DA49A8F00A15640 /* Klondike-mobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Klondike-mobile.entitlements"; sourceTree = "<group>"; };
 		168C92FE1DC6EB4800843780 /* KLEditThemeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KLEditThemeController.h; path = ios/KLEditThemeController.h; sourceTree = SOURCE_ROOT; };
 		168C92FF1DC6EB4800843780 /* KLEditThemeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KLEditThemeController.m; path = ios/KLEditThemeController.m; sourceTree = SOURCE_ROOT; };
@@ -1343,6 +1349,8 @@
 				16233CEC1D59BD0F0015CD8C /* Cell_Setting.hpp */,
 				16233CED1D59BD0F0015CD8C /* Cell_Statistics.cpp */,
 				16233CEE1D59BD0F0015CD8C /* Cell_Statistics.hpp */,
+				163081C21DEEDC15003C4E28 /* Item_Setting.cpp */,
+				163081C31DEEDC15003C4E28 /* Item_Setting.hpp */,
 			);
 			name = _Setting;
 			sourceTree = "<group>";
@@ -1364,6 +1372,8 @@
 				16233D271D59BD0F0015CD8C /* md5.h */,
 				16233D381D59BD0F0015CD8C /* VisibleRect.cpp */,
 				16233D391D59BD0F0015CD8C /* VisibleRect.h */,
+				1645F76B1E0A5B760012D0F2 /* NetworkingUtils.cpp */,
+				1645F76C1E0A5B760012D0F2 /* NetworkingUtils.hpp */,
 			);
 			name = _Utils;
 			sourceTree = "<group>";
@@ -1606,13 +1616,13 @@
 		46880B7519C43A67006E1F66 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				16CEBC5A1D8FEF7F00D9F1FD /* share_pic.jpg */,
-				16233CD31D59BCDE0015CD8C /* bottomMenu */,
-				16233CD41D59BCDE0015CD8C /* fonts */,
-				16233CD51D59BCDE0015CD8C /* localization.json */,
+				163D3E911E0B8EBD0044FE14 /* iOS */,
 				16233CD61D59BCDE0015CD8C /* Music */,
 				16233CD71D59BCDE0015CD8C /* shared */,
 				16233CD81D59BCDE0015CD8C /* ui */,
+				16CEBC5A1D8FEF7F00D9F1FD /* share_pic.jpg */,
+				16233CD51D59BCDE0015CD8C /* localization.json */,
+				163081BF1DED6435003C4E28 /* dataSource.plist */,
 			);
 			name = Resources;
 			path = ../Resources;
@@ -1803,7 +1813,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				16233CDA1D59BCDE0015CD8C /* fonts in Resources */,
 				16233EA31D59BD630015CD8C /* InfoPlist.strings in Resources */,
 				16CEBC5B1D8FEF7F00D9F1FD /* share_pic.jpg in Resources */,
 				16233E8C1D59BD630015CD8C /* InfoPlist.strings in Resources */,
@@ -1817,10 +1826,10 @@
 				16233E531D59BD630015CD8C /* InfoPlist.strings in Resources */,
 				16233E591D59BD630015CD8C /* InfoPlist.strings in Resources */,
 				16233EE61D59CB700015CD8C /* GoogleService-Info.plist in Resources */,
-				16233CD91D59BCDE0015CD8C /* bottomMenu in Resources */,
 				16233E7B1D59BD630015CD8C /* vg_cta.png in Resources */,
 				16233E8B1D59BD630015CD8C /* Images.xcassets in Resources */,
 				16233E7A1D59BD630015CD8C /* vg_close.png in Resources */,
+				163081C01DED6435003C4E28 /* dataSource.plist in Resources */,
 				16233CDE1D59BCDE0015CD8C /* ui in Resources */,
 				16233E8D1D59BD630015CD8C /* InfoPlist.strings in Resources */,
 				16233E651D59BD630015CD8C /* README.txt in Resources */,
@@ -1834,6 +1843,7 @@
 				16233E791D59BD630015CD8C /* __vungle.db in Resources */,
 				16233EB11D59BD630015CD8C /* InfoPlist.strings in Resources */,
 				16233E771D59BD630015CD8C /* UnityAds.bundle in Resources */,
+				163D3E921E0B8EBD0044FE14 /* iOS in Resources */,
 				16233E551D59BD630015CD8C /* InfoPlist.strings in Resources */,
 				16233E7D1D59BD630015CD8C /* vg_mute_on.png in Resources */,
 				16233CDB1D59BCDE0015CD8C /* localization.json in Resources */,
@@ -1878,6 +1888,7 @@
 				16233D5E1D59BD0F0015CD8C /* Localization.cpp in Sources */,
 				16233E711D59BD630015CD8C /* HLADInterstitialModel.m in Sources */,
 				168C93451DC6F85800843780 /* MASConstraintMaker.m in Sources */,
+				163081C41DEEDC15003C4E28 /* Item_Setting.cpp in Sources */,
 				16233E981D59BD630015CD8C /* KTTextField.m in Sources */,
 				168C93521DC73B7B00843780 /* KLManager.mm in Sources */,
 				168C93461DC6F85800843780 /* MASLayoutConstraint.m in Sources */,
@@ -2001,6 +2012,7 @@
 				16233D581D59BD0F0015CD8C /* KTUtils.cpp in Sources */,
 				3691B1CB1D6E9A9E00914E54 /* VungleWrapper.cpp in Sources */,
 				16233E731D59BD630015CD8C /* HLADRequest.m in Sources */,
+				1645F76D1E0A5B760012D0F2 /* NetworkingUtils.cpp in Sources */,
 				16233E8F1D59BD630015CD8C /* KLNavigationController.mm in Sources */,
 				16233D5C1D59BD0F0015CD8C /* Layer_Setting.cpp in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,

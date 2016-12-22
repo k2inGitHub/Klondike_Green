@@ -17,6 +17,14 @@
 
 @property (nonatomic, strong) NSData *preview;
 
+@property (nonatomic, strong) NSData *cardback;
+
+@property (nonatomic, strong) NSData *themeSetPreview;
+
+@property (nonatomic, strong) NSMutableArray *faces;
+
+@property (nonatomic, strong) NSDictionary *itemDict;
+
 @end
 
 @interface KLThemeModel : NSObject

@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.skyeye.solitaire.R;
+import com.skyeye.solitaire1.R;
 
 public class Cocos2dxNotification {
 	public static void doNotify(Context paramContext, String packageName, String ticker, String title, String text, int id)

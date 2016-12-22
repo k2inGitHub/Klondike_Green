@@ -8,7 +8,8 @@
 USING_NS_CC;
 using namespace NSGlobal;
 
-BottomMenu::BottomMenu() {
+BottomMenu::BottomMenu():
+_isHide(false){
 //    m_setting_layer = NULL;
 }
 
@@ -43,27 +44,47 @@ void BottomMenu::addTitle(Node *node, std::string title){
     }
 }
 
+void BottomMenu::hide(bool isAnimate){
+    for (auto item : cornerBtns) {
+        auto pos = Vec2(getContentSize().width + item->getContentSize().width/2, 83 + item->getContentSize().height/2);
+        item->stopAllActions();
+        auto moveTo = MoveTo::create(0.3, pos);
+        item->runAction(moveTo);
+    }
+    _isHide = true;
+}
+
+void BottomMenu::show(bool isAnimate){
+    _isHide = false;
+    for (auto item : cornerBtns) {
+        auto pos = Vec2(getContentSize().width - item->getContentSize().width/2, 83 + item->getContentSize().height/2);
+        item->stopAllActions();
+        auto moveTo = MoveTo::create(0.3, pos);
+        item->runAction(moveTo);
+    }
+}
+
 bool BottomMenu::init(){
     //////////////////////////////
     // 1. super init first
-    if (!CCLayerColor::initWithColor(ccc4(0,0,0,0))) {
+    if (!LayerColor::initWithColor(Color4B(0,0,0,0))) {
         return false;
     }
     
     // 逻辑大小
-    Size design_size = Size(640, 90.f);
+//    Size design_size = Size(640, 90.f);
     // 可视大小
     Size visible_size = Size(640 * ScaleFactor::scale_x, 90.f * ScaleFactor::scale_y);
     this->setContentSize(visible_size);
     
 
     // 背景图片
-    auto bg = Sprite::create("bottomMenu/bottombar.png");
+    auto bg = Sprite::create("bottombar.png");
     bg->setOpacity(175);
     this->addChild(bg, 0);
     _bg = bg;
     
-    float min_scale = fmin(ScaleFactor::scale_x, ScaleFactor::scale_y);
+//    float min_scale = fmin(ScaleFactor::scale_x, ScaleFactor::scale_y);
     
     // 设置
     auto setting = MenuItemImage::create( "btn_classic_setting1.png",
@@ -74,17 +95,18 @@ bool BottomMenu::init(){
     setting->setScale(1);
     addTitle(setting, LocalizedString("TID_UI_SETTINGS"));
     
-    //每日挑战
-    auto daily = MenuItemImage::create("btn_daily.png","btn_daily1.png",
+    //主题
+    auto daily = MenuItemImage::create("btn_classic_skin1.png","btn_classic_skin2.png",
                                        [=](Ref *sender){
                                            Audio::getInstance()->playButtonSFX();
-                                           __NotificationCenter::getInstance()->postNotification(NTFFactor::NTF_Daily);
                                            
+                                           if (onItemClick != nullptr) {
+                                               onItemClick(1);
+                                           }
                                        });
-    //GameCenterIcon->setScale(0.4f * min_scale, 0.4f * min_scale);
     daily->setPosition(Vec2(visible_size.width * 3/4, visible_size.height/2));
     daily->setScale(1);
-    addTitle(daily, LocalizedString("TID_UI_QUEST"));
+    addTitle(daily, LocalizedString("TID_UI_BACKGROUND_TITLE"));
     
     
     // 牌局
@@ -136,6 +158,30 @@ bool BottomMenu::init(){
     this->addChild(menu, 1);
     _menu = menu;
     updateMenu();
+    
+    //corner btn
+    
+    Button *dailyBtn = KTFactory::createButton("btn_daily.png", "btn_daily1.png", "", "", 0);
+    dailyBtn->addClickEventListener([=](Ref *sender){
+        Audio::getInstance()->playButtonSFX();
+        __NotificationCenter::getInstance()->postNotification(NTFFactor::NTF_Daily);
+
+    });
+    addChild(dailyBtn);
+    dailyBtn->setPosition(Vec2(visible_size.width - dailyBtn->getContentSize().width/2, 83 + dailyBtn->getContentSize().height/2));
+    cornerBtns.pushBack(dailyBtn);
+    
+//    auto daily = MenuItemImage::create("btn_daily.png","btn_daily1.png",
+//                                       [=](Ref *sender){
+//                                           Audio::getInstance()->playButtonSFX();
+//                                           __NotificationCenter::getInstance()->postNotification(NTFFactor::NTF_Daily);
+//
+//                                       });
+//    daily->setPosition(Vec2(visible_size.width * 3/4, visible_size.height/2));
+//    daily->setScale(1);
+//    addTitle(daily, LocalizedString("TID_UI_QUEST"));
+    
+    
     auto layer = ImageView::create("9_white_s.png");
     layer->setScale9Enabled(true);
     layer->setContentSize(Size(160, 40));
@@ -143,7 +189,7 @@ bool BottomMenu::init(){
     layer->setOpacity(127);
     layer->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     //LayerColor::create(Color4B(0, 0, 0, 127), 160, 40);
-    layer->setPosition(Vec2(0, 80));
+    layer->setPosition(Vec2(0, 83));
     addChild(layer);
     _detailContainer = layer;
     
@@ -191,16 +237,19 @@ void BottomMenu::onScreenSizeChanged(Ref *sender){
     _bg->setPosition(Vec2(visible_size.width/2, visible_size.height/2));
     
     _menu->setPosition(visible_size.width/2.f, visible_size.height/2.f - 8);
-    
+    this->setContentSize(visible_size);
     
     updateMenu();
     
     _indicator->setPosition(Vec2(size.width/2, 100));
     
+    auto dailyBtn = cornerBtns.at(0);
+    dailyBtn->setPosition(Vec2(visible_size.width + (_isHide ? 1 : -1)* dailyBtn->getContentSize().width/2, 83 + dailyBtn->getContentSize().height/2));
+    dailyBtn->stopAllActions();
 }
 
 void BottomMenu::onLanguageChangedNotification(Ref *sender){
-    string ids[] = {"TID_UI_SETTINGS", "TID_UI_QUEST", "TID_UI_GAME", "TID_UI_HINT", "TID_UI_UNDO"};
+    string ids[] = {"TID_UI_SETTINGS", "TID_UI_BACKGROUND_TITLE", "TID_UI_GAME", "TID_UI_HINT", "TID_UI_UNDO"};
     
     
     for (int i = 0; i < items.size(); i++) {
@@ -222,6 +271,22 @@ void BottomMenu::updateMenu(){
     _menu->alignItemsHorizontallyWithPadding(padding);
 }
 
+void BottomMenu::setConerItemBadge(int idx, bool value){
+    auto target = cornerBtns.at(idx);
+    auto badge = target->getChildByTag<Sprite *>(1024);
+    if (value == true) {
+        if (badge == nullptr) {
+            badge = Sprite::create("redpoint.png");
+            target->addChild(badge, 1024, 1024);
+            badge->setPosition(Vec2(target->getContentSize()/2) + Vec2(22, 24));
+        }
+    } else {
+        if (badge) {
+            badge->removeFromParent();
+        }
+    }
+}
+
 void BottomMenu::setItemBadge(int idx, bool value){
 
     auto target = items.at(idx);
@@ -235,6 +300,23 @@ void BottomMenu::setItemBadge(int idx, bool value){
     } else {
         if (badge) {
             badge->removeFromParent();
+        }
+    }
+}
+
+void BottomMenu::setConerItemVisible(int idx, bool visible){
+    auto target = cornerBtns.at(idx);
+    if (visible) {
+        if (target->getParent() == nullptr) {
+            this->addChild(target);
+//            target->setLocalZOrder(idx);
+//            _menu->sortAllChildren();
+//            updateMenu();
+        }
+    } else {
+        if (target->getParent() != nullptr) {
+            target->removeFromParent();
+//            updateMenu();
         }
     }
 }

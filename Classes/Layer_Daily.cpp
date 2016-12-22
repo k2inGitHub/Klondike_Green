@@ -71,6 +71,7 @@ void Layer_Daily::updateLayout(){
         n->setPositionX(n->getPositionX()-dt);
     }
     
+//    _red1->setPosition(VisibleRect::leftTop() + Vec2(centerX, -135));
     _white1->setPosition(VisibleRect::leftTop() + Vec2(centerX, -410));
     
     ht += 60;
@@ -92,7 +93,7 @@ void Layer_Daily::updateLayout(){
     _greenCrown->setPosition(VisibleRect::leftTop() + Vec2(centerX-227, -ht));
     _greenProgressBg->setPosition(VisibleRect::leftTop() + Vec2(centerX+50, -ht));
     _progressBar->setPosition(VisibleRect::leftTop() + Vec2(centerX+50, -ht));
-    _badgeRoot->setPosition(_progressBar->getPosition() + Vec2(0, -23));
+    _badgeRoot->setPosition(_progressBar->getPosition() + Vec2(-5, -23));
     
     if (!islandscape){
         
@@ -111,7 +112,7 @@ void Layer_Daily::updateLayout(){
         ht += 20;
         _dayBgGreen->setContentSize(Size(540, 135));
         _dayBgGreen->setPosition(VisibleRect::top() + Vec2(0, -ht));
-        _unlockImg->setPosition(VisibleRect::top() + Vec2(-170, -ht+8));
+        _unlockImg->setPosition(VisibleRect::top() + Vec2(-170, -ht+13));
         _unlockLabel->setPosition(VisibleRect::top() + Vec2(-170, -ht - 48));
         _startButton->setPosition(VisibleRect::top() + Vec2(100, -ht - 8));
         
@@ -158,7 +159,7 @@ bool Layer_Daily::init(KTPauseLayerDelegate *delegate){
     HLAdManagerWrapper::hideBanner();
     
     auto visibleSize = VisibleRect::getVisibleRect().size;
-    auto sprite = Sprite::create("shared/theme/1.jpg");
+    auto sprite = Sprite::create(BG_FILENAME);
     
     sprite->setPosition(VisibleRect::center());
     this->addChild(sprite, -100);
@@ -261,7 +262,7 @@ bool Layer_Daily::init(KTPauseLayerDelegate *delegate){
             _labels.pushBack(l);
         }
         
-        horizonAliament(_labels, 26, VisibleRect::top().y - ht);
+        horizonAliament(_labels, 26, VisibleRect::top().y - ht - 10);
         for(int i = 0;i < 7;i++){
             auto p = _labels.at(i)->getPosition();
             CCLOG("%s", StringUtils::format("label %d pos = %s", i, CCStringFromPoint(p)->getCString()).c_str());
@@ -269,6 +270,7 @@ bool Layer_Daily::init(KTPauseLayerDelegate *delegate){
     }
     
     {
+        
         auto bg = ImageView::create("_whiteAlpha.png");
         bg->setPosition(VisibleRect::top() + Vec2(0, -420));
         bg->setScale9Enabled(true);
@@ -308,7 +310,7 @@ bool Layer_Daily::init(KTPauseLayerDelegate *delegate){
     
     ht += 22;
     
-    auto bg = ImageView::create("bg_green.png");
+    auto bg = ImageView::create("bg_green_daily.png");
     bg->setPosition(VisibleRect::top() + Vec2(0, -ht));
     bg->setScale9Enabled(true);
     bg->setContentSize(Size(540, 78));
@@ -339,7 +341,7 @@ bool Layer_Daily::init(KTPauseLayerDelegate *delegate){
     addChild(_progressBar, 1);
     
     auto badgeRoot= Node::create();
-    badgeRoot->setPosition(_progressBar->getPosition() + Vec2(0, -23));
+    badgeRoot->setPosition(_progressBar->getPosition() + Vec2(-5, -23));
     badgeRoot->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     addChild(badgeRoot, 2);
     _badgeRoot = badgeRoot;
@@ -367,7 +369,7 @@ bool Layer_Daily::init(KTPauseLayerDelegate *delegate){
         }
     }
     
-    horizonAliament(nodes, 75, 0, true);
+    horizonAliament(nodes, 70, 0, true);
     
     ht += 110;
     
@@ -426,8 +428,9 @@ bool Layer_Daily::init(KTPauseLayerDelegate *delegate){
         auto _crown = ImageView::create("king_back.png");
 //        _crown->setContentSize(Size(48, 48));
         addChild(_crown);
-        _crown->setPosition(VisibleRect::top() + Vec2(-170, -ht+8));
+        _crown->setPosition(VisibleRect::top() + Vec2(-170, -ht+13));
         _unlockImg = _crown;
+        _unlockImg->setScale(0.8f);
     }
     
     _unlockLabel = Label::createWithSystemFont(LocalizedString("TID_CODE_UNSOLVED"), "Arial", 34);

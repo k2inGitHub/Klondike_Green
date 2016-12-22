@@ -10,8 +10,11 @@
 #include "AppDelegate.h"
 #include "Localization.hpp"
 #include "HLAnalsytWrapper.hpp"
-#include "HLAnalsytWrapper.hpp"
 #include "Global.h"
+#include "KLPopupLayer.hpp"
+#include "DataManager.h"
+using namespace NSDataManage;
+
 using namespace NSGlobal;
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 
@@ -27,6 +30,51 @@ static std::string userID = "12345";
 
 extern "C"
 {
+    
+    JNIEXPORT void JNICALL Java_org_cocos2dx_cpp_AppActivity_copyThemeFolder(JNIEnv *env, jclass, jstring jthemeName) {
+    
+        CCLOG("copyThemeFolder");
+        
+        string themeName = iOSWrapper::jstringTostring(env,jthemeName);
+        
+        auto fu = FileUtils::getInstance();
+        string themeDir = fu->getWritablePath() + themeName + "/";
+        fu->createDirectory(themeDir);
+        
+        string faceDir = themeDir + "faces/";
+        fu->createDirectory(faceDir);
+        
+        string cacheDir = StringUtils::format("/sdcard/%s/", themeName.c_str());
+        
+        string files[] = {"theme_bg.jpg", "theme_preview.png", "theme_set_preview.png", "cardback.png", "data.plist"};
+        int num = 5;
+        for(int i = 0; i < num; i++) {
+            CCLOG("s = %s", (cacheDir + files[i]).c_str());
+            CCLOG("t = %s", (themeDir + files[i]).c_str());
+            auto data = fu->getDataFromFile(cacheDir + files[i]);
+            if(data.getSize() != 0) {
+                fu->writeDataToFile(data, themeDir + files[i]);
+            }
+        }
+        auto dataMap = fu->getValueMapFromFile(cacheDir+"data.plist");
+        string faceName = dataMap["_faceName"].asString();
+        if (faceName == themeName + "_face") {
+            for (int i = 0; i < 4; i++) {
+                string faceSubDir = StringUtils::format("%s%d/", faceDir.c_str(), i);
+                fu->createDirectory(faceSubDir);
+                for(int j = 0; j < 13;j++) {
+                    string source = StringUtils::format("%s%d/%d.png", cacheDir.c_str(), i, j+1);
+                    string target = StringUtils::format("%s%d.png", faceSubDir.c_str(), j+1);
+                    CCLOG("s = %s", (source).c_str());
+                    CCLOG("t = %s", (target).c_str());
+                    auto data = fu->getDataFromFile(source);
+                    fu->writeDataToFile(data, target);
+                }
+            }
+        }
+    }
+
+    
     JNIEXPORT void JNICALL Java_org_cocos2dx_cpp_AppActivity_onThemeSetup(JNIEnv *env, jclass, jstring themeName)
     {
         CCLOG("onThemeSetup");
@@ -102,6 +150,37 @@ extern "C"
     //        editBoxEditingDidBegin(index);
     //    }
     
+}
+
+void iOSWrapper::showToSetupThemeAppPage(bool directly){
+    
+    function<void()> func = [=]()
+    {
+        JniMethodInfo minfo;
+        bool isHave = JniHelper::getStaticMethodInfo(minfo,"org.cocos2dx.cpp.AppActivity","showToSetupThemeAppPage","(Ljava/lang/String;)V");
+        if(!isHave){
+        }else{
+            string devName = HLAnalsytWrapper::stringValue("KL_SetupThemeURL", "HiColor");
+            
+            jstring p1 = minfo.env->NewStringUTF(devName.c_str());
+            
+            minfo.env->CallStaticVoidMethod(minfo.classID,minfo.methodID, p1);
+        }
+    };
+    
+    if(directly) {
+        func();
+        return;
+    }
+    
+    //KT SYN
+    vector<string> btns;
+    btns.push_back(LocalizedString("TID_UI_CONFIRM"));
+    KLAlertLayer::show("", LocalizedString("TID_UI_GOOGOLE_TO_DOWNLOAD_THEME"), LocalizedString("TID_UI_CANCEL"), btns, [=](KLAlertLayer *layer, int buttonIdx){
+        if(buttonIdx == 1) {
+            func();
+        }
+    });
 }
 
 void iOSWrapper::setStart(bool value){

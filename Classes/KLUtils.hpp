@@ -11,6 +11,29 @@
 
 #include "KTLayer.h"
 
+//int DataManager::getVegasScore(){
+//    return UserDefault::getInstance()->getIntegerForKey("KL_VegasScore", 0);
+//}
+//
+//void DataManager::setVegasScore(int value){
+//    UserDefault::getInstance()->setIntegerForKey("KL_VegasScore", value);
+//    UserDefault::getInstance()->flush();
+//}
+//
+//void DataManager::setVegasOn(bool value){
+//    UserDefault::getInstance()->setBoolForKey("kl_isVegasOn", value);
+//    UserDefault::getInstance()->flush();
+//}
+//void DataManager::setVegasScoreAdd(bool value){
+//    UserDefault::getInstance()->setBoolForKey("kl_isVegasScoreAdd", value);
+//    UserDefault::getInstance()->flush();
+//}
+
+
+
+
+
+
 class KLUtils {
     
 public:

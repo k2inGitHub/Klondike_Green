@@ -25,7 +25,7 @@ bool Layer_HighScore::init(){
         return false;
     }
     auto size = VisibleRect::getVisibleRect().size;
-    auto sprite = Sprite::create("shared/theme/1.jpg");
+    auto sprite = Sprite::create(BG_FILENAME);
     sprite->setPosition(VisibleRect::center());
     this->addChild(sprite, -100);
     _bg = sprite;

@@ -8,6 +8,12 @@
 
 #include "Button_Highlight.hpp"
 
+Button_Highlight::Button_Highlight():
+_customButton(nullptr),
+_badge(nullptr){
+
+}
+
 void Button_Highlight::lazyInitBadge(){
     if (_badge == nullptr) {
         _badge = ImageView::create("redpoint.png");
@@ -77,26 +83,26 @@ bool Button_Highlight::init(const Size& contentSize){
     _selectIcon->setScale9Enabled(true);
     _selectIcon->setContentSize(contentSize);
     _selectIcon->setPosition(contentSize/2);
-    addChild(_selectIcon);
+    addChild(_selectIcon, 1);
     
     _bgIcon = ImageView::create("9_white_s.png");
     _bgIcon->setScale9Enabled(true);
     _bgIcon->setContentSize(contentSize - Size(20, 20));
     _bgIcon->setPosition(contentSize/2);
-    addChild(_bgIcon);
+    addChild(_bgIcon, 5);
     
     _icon = ImageView::create();
     _icon->setScale9Enabled(true);
     _icon->setContentSize(contentSize - Size(20 + _bgOutlineWidth * 2, 20 + _bgOutlineWidth * 2));
     _icon->setPosition(contentSize/2);
-    addChild(_icon);
+    addChild(_icon, 10);
     
     
     _addButton = ImageView::create("B_high_add.png");
     _addButton->setScale9Enabled(true);
 //    _addButton->setContentSize(Size(20, 20));
     _addButton->setPosition(Size(contentSize.width-30, 30));
-    addChild(_addButton);
+    addChild(_addButton, 15);
     _addButton->setVisible(false);
     
     setSelected(false);
