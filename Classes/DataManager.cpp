@@ -114,7 +114,7 @@ namespace NSDataManage {
             return theme->getPreviewFile();
         }
     }
-    
+    //
     string DataManager::getThemeFile(){
         string name = getSelectThemeName();
         if (name == "theme_1") {

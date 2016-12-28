@@ -36,10 +36,10 @@ class NetworkingUtils {
 public:
     
     static void initDB();
-    //带缓存的网络图片请求
+    //带缓存的网络图片请求 一次请求 失败读取缓存
     static void loadImage(ImageView *imageView,const string& url, const string& placeHolder = "", ImageRequestSuccessCallback onSuccess = nullptr, ImageRequestFailureCallback onFailure = nullptr);
     
-    //带缓存的网络数据请求
+    //带缓存的网络数据请求 每次请求 失败读取缓存
     static void sendGet(std::string url, std::unordered_map<std::string, std::string> parameters, HttpRequestSuccessCallback onSuccess, HttpRequestFailureCallback onFailure);
 };
 
